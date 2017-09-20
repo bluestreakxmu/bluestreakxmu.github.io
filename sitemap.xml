@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://nullhint.org/2017/09/20/Java_proxy/</loc>
+    
+    <lastmod>2017-09-20T16:18:28.188Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://nullhint.org/about/index.html</loc>
     
     <lastmod>2017-09-17T16:28:35.289Z</lastmod>
