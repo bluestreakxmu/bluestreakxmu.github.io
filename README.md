@@ -1,3 +1,3 @@
-# bluestreakxmu.github.io
+# My BLOG
 
-This is my blog.
+My blog address is [here](http://nullhint.org).
