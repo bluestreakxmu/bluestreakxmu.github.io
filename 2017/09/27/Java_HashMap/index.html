@@ -17,7 +17,7 @@
 <meta property="og:description" content="HashMap概述HashMap是基于哈希表的Map接口的非同步实现。此实现提供所有可选的映射操作，并允许使用null值和null键。此类不保证映射的顺序，特别是它不保证该顺序恒久不变。（Note：此为官方文档描述）关键点：基于Map接口实现；允许null键/值；非同步；不保证有序(比如插入的顺序)、也不保证序不随时间变化。 HashMap使用12345Map&amp;lt;String, String&amp;">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://owucj827k.bkt.clouddn.com/hashmap/HashMap.jpg">
-<meta property="og:updated_time" content="2017-09-30T12:15:07.438Z">
+<meta property="og:updated_time" content="2017-10-03T06:28:10.536Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java HashMap实现原理">
 <meta name="twitter:description" content="HashMap概述HashMap是基于哈希表的Map接口的非同步实现。此实现提供所有可选的映射操作，并允许使用null值和null键。此类不保证映射的顺序，特别是它不保证该顺序恒久不变。（Note：此为官方文档描述）关键点：基于Map接口实现；允许null键/值；非同步；不保证有序(比如插入的顺序)、也不保证序不随时间变化。 HashMap使用12345Map&amp;lt;String, String&amp;">
@@ -98,6 +98,7 @@
       
         <h2 id="HashMap概述"><a href="#HashMap概述" class="headerlink" title="HashMap概述"></a>HashMap概述</h2><p><code>HashMap</code>是基于哈希表的Map接口的<strong>非同步</strong>实现。此实现提供所有可选的映射操作，并<strong>允许使用null值和null键</strong>。此类不保证映射的顺序，特别是它不保证该顺序恒久不变。（Note：此为官方文档描述）<br><strong>关键点：</strong>基于Map接口实现；允许null键/值；非同步；不保证有序(比如插入的顺序)、也不保证序不随时间变化。</p>
 <h2 id="HashMap使用"><a href="#HashMap使用" class="headerlink" title="HashMap使用"></a>HashMap使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</div><div class="line">map.put(<span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">map.put(<span class="string">"key"</span>, <span class="string">"value"</span>);</div><div class="line">map.get(<span class="keyword">null</span>);</div><div class="line">map.get(<span class="string">"key"</span>);</div></pre></td></tr></table></figure>
+<a id="more"></a>
 <h2 id="HashMap的术语"><a href="#HashMap的术语" class="headerlink" title="HashMap的术语"></a>HashMap的术语</h2><ul>
 <li>bucket：每个列表被称为桶。</li>
 <li>capacity：散列表数组大小，默认16。</li>
@@ -133,7 +134,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cj8axaa8o00010gv78sfjrn3r" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cj8b8jz5j00011ov7b5mm1jg0" class="article-share-link">Share</a>
       
       
     </footer>
