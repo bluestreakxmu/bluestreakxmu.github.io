@@ -1,1 +1,1 @@
-http://nullhint.org/2017/09/27/Java_HashMap/
+http://nullhint.org/2017/10/12/Java_Singleton/

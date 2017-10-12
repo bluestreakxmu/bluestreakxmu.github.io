@@ -4,6 +4,24 @@
 
     
   <url>
+    <loc>http://nullhint.org/2017/10/12/Java_Singleton/</loc>
+    <lastmod>2017-10-12T12:22:20.703Z</lastmod>
+    <data>
+        <display>
+        <title>Java单例模式实现方式</title>
+        <pubTime>2017-10-12T13:00:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="设计模式" url="http://nullhint.org/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://nullhint.org/2017/09/20/Java_proxy/</loc>
     <lastmod>2017-10-03T06:32:07.513Z</lastmod>
     <data>
