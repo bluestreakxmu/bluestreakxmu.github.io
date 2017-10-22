@@ -1,1 +1,1 @@
-http://nullhint.org/2017/10/12/Java_Singleton/
+http://nullhint.org/2017/10/22/Java_FactoryPattern/

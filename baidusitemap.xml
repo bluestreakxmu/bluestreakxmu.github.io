@@ -4,6 +4,24 @@
 
     
   <url>
+    <loc>http://nullhint.org/2017/10/22/Java_FactoryPattern/</loc>
+    <lastmod>2017-10-22T05:17:32.816Z</lastmod>
+    <data>
+        <display>
+        <title>Java工厂模式实现方式</title>
+        <pubTime>2017-10-22T05:15:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="设计模式" url="http://nullhint.org/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://nullhint.org/2017/10/12/Java_Singleton/</loc>
     <lastmod>2017-10-12T12:22:20.703Z</lastmod>
     <data>

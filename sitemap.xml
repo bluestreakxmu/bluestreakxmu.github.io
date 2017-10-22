@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://nullhint.org/2017/10/22/Java_FactoryPattern/</loc>
+    
+    <lastmod>2017-10-22T05:17:32.816Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://nullhint.org/2017/10/12/Java_Singleton/</loc>
     
     <lastmod>2017-10-12T12:22:20.703Z</lastmod>
