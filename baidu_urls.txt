@@ -1,1 +1,1 @@
-http://nullhint.org/2017/10/28/Java_ThreadLocal/
+http://nullhint.org/2017/10/28/Java_DesignPattern/

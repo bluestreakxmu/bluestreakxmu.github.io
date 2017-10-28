@@ -4,6 +4,24 @@
 
     
   <url>
+    <loc>http://nullhint.org/2017/10/28/Java_DesignPattern/</loc>
+    <lastmod>2017-10-28T11:10:15.152Z</lastmod>
+    <data>
+        <display>
+        <title>设计模式概述</title>
+        <pubTime>2017-10-28T11:10:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="设计模式" url="http://nullhint.org/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://nullhint.org/2017/10/28/Java_ThreadLocal/</loc>
     <lastmod>2017-10-28T04:08:55.601Z</lastmod>
     <data>
