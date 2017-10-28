@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>ThreadLocal和InheritableThreadLocal实现原理 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="ThreadLocal概述类Threadlocal主要解决的是每个线程绑定自己的值，可以将ThreadLocal类比喻成全局存放数据的盒子，盒子中可以存储每个线程的私有数据。子线程和父线程各有各自所拥有的值。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThreadLocal和InheritableThreadLocal实现原理">
+<meta property="og:url" content="http://nullhint.org/2017/10/28/Java_ThreadLocal/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="ThreadLocal概述类Threadlocal主要解决的是每个线程绑定自己的值，可以将ThreadLocal类比喻成全局存放数据的盒子，盒子中可以存储每个线程的私有数据。子线程和父线程各有各自所拥有的值。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2017-10-28T04:08:55.601Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ThreadLocal和InheritableThreadLocal实现原理">
+<meta name="twitter:description" content="ThreadLocal概述类Threadlocal主要解决的是每个线程绑定自己的值，可以将ThreadLocal类比喻成全局存放数据的盒子，盒子中可以存储每个线程的私有数据。子线程和父线程各有各自所拥有的值。">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java_ThreadLocal" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/28/Java_ThreadLocal/" class="article-date">
+  <time datetime="2017-10-28T04:10:00.000Z" itemprop="datePublished">2017-10-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ThreadLocal和InheritableThreadLocal实现原理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ThreadLocal"><span class="toc-number">1.</span> <span class="toc-text">ThreadLocal</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用示例"><span class="toc-number">1.2.</span> <span class="toc-text">使用示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现原理"><span class="toc-number">1.3.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ThreadLocal的set-方法"><span class="toc-number">1.3.1.</span> <span class="toc-text">ThreadLocal的set()方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ThreadLocal的get-方法"><span class="toc-number">1.3.2.</span> <span class="toc-text">ThreadLocal的get()方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ThreadLocal的initialValue-方法"><span class="toc-number">1.3.3.</span> <span class="toc-text">ThreadLocal的initialValue()方法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InheritableThreadLocal"><span class="toc-number">2.</span> <span class="toc-text">InheritableThreadLocal</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述-1"><span class="toc-number">2.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用示例-1"><span class="toc-number">2.2.</span> <span class="toc-text">使用示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#值继承再修改"><span class="toc-number">2.3.</span> <span class="toc-text">值继承再修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现原理-1"><span class="toc-number">2.4.</span> <span class="toc-text">实现原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">3.</span> <span class="toc-text">参考文档</span></a></li></ol>
+        </div>
+        
+        <h2 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>类<code>Threadlocal</code>主要解决的是每个线程绑定自己的值，可以将<code>ThreadLocal</code>类比喻成全局存放数据的盒子，盒子中可以存储每个线程的私有数据。<br>子线程和父线程各有各自所拥有的值。</p>
+<a id="more"></a>
+<h3 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Tools</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> ThreadLocal threadLocal = <span class="keyword">new</span> ThreadLocal();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadA</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</div><div class="line">                Tools.threadLocal.set(<span class="string">"ThreadA"</span> + (i + <span class="number">1</span>));</div><div class="line">                System.out.println(<span class="string">"ThreadA get Value="</span> + Tools.threadLocal.get());</div><div class="line">                Thread.sleep(<span class="number">200</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadB</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</div><div class="line">                Tools.threadLocal.set(<span class="string">"ThreadB"</span> + (i + <span class="number">1</span>));</div><div class="line">                System.out.println(<span class="string">"ThreadB get Value="</span> + Tools.threadLocal.get());</div><div class="line">                Thread.sleep(<span class="number">200</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Run</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            ThreadA a = <span class="keyword">new</span> ThreadA();</div><div class="line">            ThreadB b = <span class="keyword">new</span> ThreadB();</div><div class="line">            a.start();</div><div class="line">            b.start();</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</div><div class="line">                Tools.threadLocal.set(<span class="string">"Main"</span> + (i + <span class="number">1</span>));</div><div class="line">                System.out.println(<span class="string">"Main get Value="</span> + Tools.threadLocal.get());</div><div class="line">                Thread.sleep(<span class="number">200</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>输出结果如下：</strong><blockquote>
+<p>……<br>ThreadA get Value=ThreadA95<br>ThreadB get Value=ThreadB95<br>Main get Value=Main95<br>ThreadA get Value=ThreadA96<br>ThreadB get Value=ThreadB96<br>Main get Value=Main96<br>ThreadA get Value=ThreadA97<br>ThreadB get Value=ThreadB97<br>Main get Value=Main97<br>ThreadA get Value=ThreadA98<br>ThreadB get Value=ThreadB98<br>Main get Value=Main98<br>ThreadA get Value=ThreadA99<br>ThreadB get Value=ThreadB99<br>Main get Value=Main99<br>ThreadA get Value=ThreadA100<br>ThreadB get Value=ThreadB100<br>Main get Value=Main100</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>通过每个线程对象<code>java.lang.Thread</code>的<code>ThreadLocal.ThreadLocalMap</code>成员变量来保存线程私有的数据副本，<code>ThreadLocal.ThreadLocalMap</code>是一种hash map，其内部通过一个数组来保存数据，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Thread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line">    <span class="comment">// ......</span></div><div class="line"> </div><div class="line">    <span class="comment">/* ThreadLocal values pertaining to this thread. This map is maintained by the ThreadLocal class. */</span></div><div class="line">    ThreadLocal.ThreadLocalMap threadLocals = <span class="keyword">null</span>;</div><div class="line">    </div><div class="line">    <span class="comment">// ......</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="ThreadLocal的set-方法"><a href="#ThreadLocal的set-方法" class="headerlink" title="ThreadLocal的set()方法"></a>ThreadLocal的set()方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</div><div class="line">        <span class="comment">// 1.获取当前线程</span></div><div class="line">        Thread t = Thread.currentThread();</div><div class="line">        <span class="comment">// 2.获取当前线程对应的ThreadLocalMap成员变量</span></div><div class="line">        ThreadLocalMap map = getMap(t);</div><div class="line">        <span class="comment">// 3.ThreadLocalMap成员变量不为空则往该hash map设值，其中ThreadLocal作为key值</span></div><div class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>)</div><div class="line">            map.set(<span class="keyword">this</span>, value);</div><div class="line">        <span class="keyword">else</span></div><div class="line">        <span class="comment">// 4.ThreadLocalMap成员变量不存在则创建该map</span></div><div class="line">            createMap(t, value);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>关键点：</strong></p>
+<blockquote>
+<ul>
+<li><code>ThreadLocal</code>的静态内部类<code>ThreadLocalMap</code>作为存储数据的数据结构，其内部是一个以数组为实现方式的hash map。</li>
+<li><code>ThreadLocalMap</code>根据<code>ThreadLocal</code>对象本身来计算hash map中的key，而key的hashCode是通过<code>ThreadLocal</code>类的静态原子变量<code>nextHashCode</code>来实现。</li>
+</ul>
+</blockquote>
+<h4 id="ThreadLocal的get-方法"><a href="#ThreadLocal的get-方法" class="headerlink" title="ThreadLocal的get()方法"></a>ThreadLocal的get()方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// 1.获取当前线程</span></div><div class="line">        Thread t = Thread.currentThread();</div><div class="line">        <span class="comment">// 2.获取当前线程对应的ThreadLocalMap成员变量</span></div><div class="line">        ThreadLocalMap map = getMap(t);</div><div class="line">        <span class="comment">// 3.根据`ThreadLocal`对象计算hash map中的key，获取对应的数据</span></div><div class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</div><div class="line">            ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</div><div class="line">            <span class="keyword">if</span> (e != <span class="keyword">null</span>)</div><div class="line">                <span class="keyword">return</span> (T)e.value;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 4.如果ThreadLocalMap尚未创建，则设置初始值，可通过覆盖initialValue()方法来自定义初始化</span></div><div class="line">        <span class="keyword">return</span> setInitialValue();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="ThreadLocal的initialValue-方法"><a href="#ThreadLocal的initialValue-方法" class="headerlink" title="ThreadLocal的initialValue()方法"></a>ThreadLocal的initialValue()方法</h4><ul>
+<li>通过覆写该方法来对<code>ThreadLocal</code>自定义初始化。</li>
+<li>只有首次调用<code>get()</code>方法并且当前线程尚未创建<code>ThreadLocalMap</code>成员变量时，才会调用<code>initialValue()</code>。</li>
+<li>如果先调用了<code>set()</code>方法，则不会调用<code>initialValue()</code>。</li>
+</ul>
+<h2 id="InheritableThreadLocal"><a href="#InheritableThreadLocal" class="headerlink" title="InheritableThreadLocal"></a>InheritableThreadLocal</h2><h3 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h3><p>使用类<code>InheritableThreadLocal</code>可以在子线程中取得父线程继承下来的值。<br>需要注意的一点是：如果子线程在取得值的同时，主线程将<code>InheritableThreadLocal</code>中的值进行更改，那么子线程取到的值还是旧值。</p>
+<h3 id="使用示例-1"><a href="#使用示例-1" class="headerlink" title="使用示例"></a>使用示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InheritableThreadLocalExt</span> <span class="keyword">extends</span> <span class="title">InheritableThreadLocal</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> (<span class="keyword">new</span> Date()).getTime();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Tools</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> InheritableThreadLocalExt threadLocal = <span class="keyword">new</span> InheritableThreadLocalExt();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadA</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</div><div class="line">                System.out.println(<span class="string">"在ThreadA线程中取值="</span> + Tools.threadLocal.get());</div><div class="line">                Thread.sleep(<span class="number">100</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Run</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</div><div class="line">                System.out.println(<span class="string">"   在Main线程中取值="</span> + Tools.threadLocal.get());</div><div class="line">                Thread.sleep(<span class="number">100</span>);</div><div class="line">            &#125;</div><div class="line">            Thread.sleep(<span class="number">5000</span>);</div><div class="line">            <span class="keyword">new</span> ThreadA().start();</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>输出结果如下：</strong><blockquote>
+<p>  在Main线程中取值=1508762101600<br>  在Main线程中取值=1508762101600<br>  在Main线程中取值=1508762101600<br>  在Main线程中取值=1508762101600<br>  在Main线程中取值=1508762101600<br>  在Main线程中取值=1508762101600<br>  在Main线程中取值=1508762101600<br>  在Main线程中取值=1508762101600<br>  在Main线程中取值=1508762101600<br>  在Main线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600<br>在ThreadA线程中取值=1508762101600</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="值继承再修改"><a href="#值继承再修改" class="headerlink" title="值继承再修改"></a>值继承再修改</h3><blockquote>
+<p>在继承父线程的值的同时，对值进行进一步的处理。</p>
+</blockquote>
+<ul>
+<li><strong>更改类<code>InheritableThreadLocalExt</code>代码如下：</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InheritableThreadLocalExt</span> <span class="keyword">extends</span> <span class="title">InheritableThreadLocal</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> (<span class="keyword">new</span> Date()).getTime();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">childValue</span><span class="params">(Object parentValue)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> parentValue + <span class="string">"  我在子线程加的~！"</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>输出结果如下：</strong><blockquote>
+<p>   在Main线程中取值=1508762297039<br>   在Main线程中取值=1508762297039<br>   在Main线程中取值=1508762297039<br>   在Main线程中取值=1508762297039<br>   在Main线程中取值=1508762297039<br>   在Main线程中取值=1508762297039<br>   在Main线程中取值=1508762297039<br>   在Main线程中取值=1508762297039<br>   在Main线程中取值=1508762297039<br>   在Main线程中取值=1508762297039<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！<br>在ThreadA线程中取值=1508762297039  我在子线程加的~！</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="实现原理-1"><a href="#实现原理-1" class="headerlink" title="实现原理"></a>实现原理</h3><ul>
+<li><code>InheritableThreadLocal</code>继承自<code>ThreadLocal</code>，通过<code>Thread</code>类的<code>ThreadLocal.ThreadLocalMap</code>类型成员变量<code>inheritableThreadLocals</code>在父子线程中传递值，并通过覆写<code>getMap()</code>和<code>createMap()</code>把<code>Thread</code>中的<code>threadLocals</code>替换成<code>inheritableThreadLocals</code>。<br>参照以上的例子，实现原理大致如下：</li>
+</ul>
+<ol>
+<li>调用<code>main()</code>方法时创建main线程。此时，<code>inheritableThreadLocals</code>为null。</li>
+<li><code>main()</code>方法通过<code>InheritableThreadLocalExt.get()</code>方法，在内部调用<code>InheritableThreadLocalExt.initialValue()</code>给main线程的<code>inheritableThreadLocals</code>成员变量赋初始值1508762297039。</li>
+<li>在main()方法中通过<code>new ThreadA();</code>创建子线程，此时<code>Thread</code>类的默认构造函数调用<code>init()</code>方法，给子线程的<code>inheritableThreadLocals</code>成员变量赋上main父线程的值。代码如下：</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ThreadGroup g, Runnable target, String name,</span></span></div><div class="line"><span class="function"><span class="params">                   <span class="keyword">long</span> stackSize, AccessControlContext acc)</span> </span>&#123;</div><div class="line">     <span class="comment">// ...</span></div><div class="line"> </div><div class="line">     <span class="keyword">if</span> (parent.inheritableThreadLocals != <span class="keyword">null</span>)</div><div class="line">         <span class="keyword">this</span>.inheritableThreadLocals =</div><div class="line">             ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);</div><div class="line">     </div><div class="line">     <span class="comment">// ...</span></div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ul>
+<li>《Java多线程编程核心技术》</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cj9at4ucw0003skv7zqvpck0q" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/10/22/Java_FactoryPattern/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Java工厂模式实现方式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/10/28/Java_ThreadLocal/">ThreadLocal和InheritableThreadLocal实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/22/Java_FactoryPattern/">Java工厂模式实现方式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/12/Java_Singleton/">Java单例模式实现方式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/27/Java_HashMap/">Java HashMap实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/20/Java_proxy/">Java静态代理和动态代理简介</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2017 Xibo Li&nbsp;&nbsp;&nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
