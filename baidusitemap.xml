@@ -4,6 +4,24 @@
 
     
   <url>
+    <loc>http://nullhint.org/2017/10/29/Java_BuilderPattern/</loc>
+    <lastmod>2017-10-29T11:34:09.223Z</lastmod>
+    <data>
+        <display>
+        <title>建造者（生成器）模式</title>
+        <pubTime>2017-10-29T11:35:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="设计模式" url="http://nullhint.org/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/</loc>
     <lastmod>2017-10-29T09:05:11.016Z</lastmod>
     <data>

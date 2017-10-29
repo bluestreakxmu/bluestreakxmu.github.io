@@ -1,1 +1,1 @@
-http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/
+http://nullhint.org/2017/10/29/Java_BuilderPattern/
