@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>模板方法模式 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="定义模板方法模式在一个方法中定义一个算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某些步骤。Define the skeleton of an algorithm in an operation,deferring some steps to subclasses.Template Method lets subclasses redefine">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模板方法模式">
+<meta property="og:url" content="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="定义模板方法模式在一个方法中定义一个算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某些步骤。Define the skeleton of an algorithm in an operation,deferring some steps to subclasses.Template Method lets subclasses redefine">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://owucj827k.bkt.clouddn.com/designpattern/templatemethod/TemplateMethodCustomClassUML.jpg">
+<meta property="og:updated_time" content="2017-10-29T09:05:11.016Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="模板方法模式">
+<meta name="twitter:description" content="定义模板方法模式在一个方法中定义一个算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某些步骤。Define the skeleton of an algorithm in an operation,deferring some steps to subclasses.Template Method lets subclasses redefine">
+<meta name="twitter:image" content="http://owucj827k.bkt.clouddn.com/designpattern/templatemethod/TemplateMethodCustomClassUML.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java_TemplateMethodPattern" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/29/Java_TemplateMethodPattern/" class="article-date">
+  <time datetime="2017-10-29T09:10:00.000Z" itemprop="datePublished">2017-10-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/设计模式/">设计模式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      模板方法模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义"><span class="toc-number">1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通用类图"><span class="toc-number">2.</span> <span class="toc-text">通用类图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通用代码"><span class="toc-number">3.</span> <span class="toc-text">通用代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#抽象基类"><span class="toc-number">3.1.</span> <span class="toc-text">抽象基类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现类"><span class="toc-number">3.2.</span> <span class="toc-text">实现类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#场景类"><span class="toc-number">3.3.</span> <span class="toc-text">场景类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出结果"><span class="toc-number">3.4.</span> <span class="toc-text">输出结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#补充"><span class="toc-number">4.</span> <span class="toc-text">补充</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">5.</span> <span class="toc-text">参考文档</span></a></li></ol>
+        </div>
+        
+        <h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>模板方法模式在一个方法中定义一个算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某些步骤。<br>Define the skeleton of an algorithm in an operation,deferring some steps to subclasses.Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm’s structure.</p>
+<h2 id="通用类图"><a href="#通用类图" class="headerlink" title="通用类图"></a>通用类图</h2><p><img src="http://owucj827k.bkt.clouddn.com/designpattern/templatemethod/TemplateMethodCustomClassUML.jpg" alt="模板方法模式通用类图"></p>
+<a id="more"></a>
+<h2 id="通用代码"><a href="#通用代码" class="headerlink" title="通用代码"></a>通用代码</h2><h3 id="抽象基类"><a href="#抽象基类" class="headerlink" title="抽象基类"></a>抽象基类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractClass</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">templateMethod</span><span class="params">()</span> </span>&#123;</div><div class="line">        primitiveOperation1();</div><div class="line">        primitiveOperation2();</div><div class="line">        concreteOperation();</div><div class="line">        hook();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">primitiveOperation1</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">primitiveOperation2</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">// 声明为final，使其无法被覆盖</span></div><div class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">concreteOperation</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// 这里是实现</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 钩子方法，不强制实现该方法</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">hook</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="实现类"><a href="#实现类" class="headerlink" title="实现类"></a>实现类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteClass1</span> <span class="keyword">extends</span> <span class="title">AbstractClass</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">primitiveOperation1</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"ConcreteClass1.primitiveOperation1()"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">primitiveOperation2</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"ConcreteClass1.primitiveOperation2()"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteClass2</span> <span class="keyword">extends</span> <span class="title">AbstractClass</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">primitiveOperation1</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"ConcreteClass2.primitiveOperation1()"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">primitiveOperation2</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"ConcreteClass2.primitiveOperation2()"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="场景类"><a href="#场景类" class="headerlink" title="场景类"></a>场景类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        AbstractClass class1 = <span class="keyword">new</span> ConcreteClass1();</div><div class="line">        AbstractClass class2 = <span class="keyword">new</span> ConcreteClass2();</div><div class="line">        <span class="comment">// 调用模板方法</span></div><div class="line">        class1.templateMethod();</div><div class="line">        class2.templateMethod();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="输出结果"><a href="#输出结果" class="headerlink" title="输出结果"></a>输出结果</h3><blockquote>
+<p>ConcreteClass1.primitiveOperation1()<br>ConcreteClass1.primitiveOperation2()<br>ConcreteClass2.primitiveOperation1()<br>ConcreteClass2.primitiveOperation2()</p>
+</blockquote>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><ul>
+<li>策略模式和模板方法模式都封装算法，一个用组合，一个用<strong>继承</strong>。</li>
+<li>工厂方法是模板方法的一种特殊版本。</li>
+</ul>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p>《设计模式之禅》<br>《Head First设计模式》</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cj9cj5pca0006vcv7lid05gwc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/10/28/Java_DesignPattern/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">设计模式概述</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/10/29/Java_TemplateMethodPattern/">模板方法模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/28/Java_DesignPattern/">设计模式概述</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/28/Java_ThreadLocal/">ThreadLocal和InheritableThreadLocal实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/22/Java_FactoryPattern/">Java工厂模式实现方式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/12/Java_Singleton/">Java单例模式实现方式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2017 Xibo Li&nbsp;&nbsp;&nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
