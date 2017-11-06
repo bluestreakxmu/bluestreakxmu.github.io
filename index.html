@@ -66,6 +66,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-JUC_CountDownLatch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/06/JUC_CountDownLatch/" class="article-date">
+  <time datetime="2017-11-06T15:25:00.000Z" itemprop="datePublished">2017-11-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/06/JUC_CountDownLatch/">JUC.CountDownLatch实现原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><blockquote>
+<p><code>CountDownLatch</code>是一个同步辅助类，在完成一组正在其他线程中执行的操作之前，它允许一个或多个线程一直等待。<br>A synchronization aid that allows one or more threads to wait until a set of operations being performed in other threads completes.</p>
+</blockquote>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><blockquote>
+<p><code>CountDownLatch</code>的典型用法是将一个程序分成独立的N个子任务，并创建一个值为N的<code>CountDownLatch</code>，每个子任务执行完就调用<code>countDown()</code>，等待问题被解决的任务调用这个锁的<code>await()</code>，直到有子任务执行完才能继续往下执行。</p>
+</blockquote>
+        
+          <p class="article-more-link">
+            <a href="/2017/11/06/JUC_CountDownLatch/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cj9oc8egs0003nov79aaxpabh" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Java_BuilderPattern" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/10/29/Java_BuilderPattern/" class="article-date">
@@ -105,7 +155,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cj9coh4tj00059cv76n0si206" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cj9oc8eh00005nov7p2mfw7px" class="article-share-link">Share</a>
       
       
     </footer>
@@ -151,7 +201,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cj9coh4tt00099cv7qfxfonrb" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cj9oc8eh30007nov7f7zdh2jc" class="article-share-link">Share</a>
       
       
     </footer>
@@ -207,7 +257,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cj9coh4td00039cv7yq4rymuv" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cj9oc8eh20006nov7xgru09hm" class="article-share-link">Share</a>
       
       
     </footer>
@@ -252,7 +302,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cj9coh4tw000d9cv78oivpbm6" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cj9oc8ehf000fnov7gkk2yj3n" class="article-share-link">Share</a>
       
       
     </footer>
@@ -304,7 +354,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cj9coh4t500019cv76yaz4hzi" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cj9oc8egj0001nov7wltoorou" class="article-share-link">Share</a>
       
       
     </footer>
@@ -352,7 +402,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cj9coh4tn00069cv70xxei2n9" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cj9oc8eha000anov7scz6gmdf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -398,7 +448,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cj9coh4tp00079cv7she9uu4o" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cj9oc8eh80009nov7aue7j49u" class="article-share-link">Share</a>
       
       
     </footer>
@@ -447,7 +497,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cj9coh4tv000a9cv7jcv5er8c" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cj9oc8ehc000dnov7wjpowkyd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -482,7 +532,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
     </div>
   </div>
 
@@ -493,6 +543,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2017/11/06/JUC_CountDownLatch/">JUC.CountDownLatch实现原理</a>
+          </li>
         
           <li>
             <a href="/2017/10/29/Java_BuilderPattern/">建造者（生成器）模式</a>
@@ -508,10 +562,6 @@
         
           <li>
             <a href="/2017/10/28/Java_ThreadLocal/">ThreadLocal和InheritableThreadLocal实现原理</a>
-          </li>
-        
-          <li>
-            <a href="/2017/10/22/Java_FactoryPattern/">Java工厂模式实现方式</a>
           </li>
         
       </ul>
