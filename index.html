@@ -66,6 +66,51 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ReentrantLock" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/15/ReentrantLock/" class="article-date">
+  <time datetime="2017-11-15T12:30:00.000Z" itemprop="datePublished">2017-11-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/15/ReentrantLock/">ReentrantLock实现原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><code>ReentrantLock</code>从API层面实现互斥锁，而<code>synchronized</code>关键字则从JVM层面来实现互斥锁。<br><code>ReentrantLock</code>可以实现公平锁和非公平锁，而<code>synchronized</code>只能是非公平锁。<br><code>ReentrantLock</code>可以绑定多个Conditon。</p>
+        
+          <p class="article-more-link">
+            <a href="/2017/11/15/ReentrantLock/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/11/15/ReentrantLock/" data-id="cja10vhpr000htsv7l7m6uai6" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-JUC_CountDownLatch" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/11/06/JUC_CountDownLatch/" class="article-date">
@@ -106,7 +151,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cj9wywwjq0006hgv701thnf9z" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cja10vhog0001tsv7yix4c963" class="article-share-link">Share</a>
       
       
     </footer>
@@ -155,7 +200,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cj9wywwjp0005hgv784z7f0rd" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cja10vhow0003tsv7nz7ndng4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -201,7 +246,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cj9wywwjw0009hgv7vuo96h7x" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cja10vhpc0006tsv7t4mfda86" class="article-share-link">Share</a>
       
       
     </footer>
@@ -257,7 +302,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cj9wywwjj0003hgv74wkvterh" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cja10vhpc0005tsv7un7lqqcj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -302,7 +347,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cj9wywwjy000ahgv718a0x3jd" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cja10vhpc000dtsv7te5su7uh" class="article-share-link">Share</a>
       
       
     </footer>
@@ -354,7 +399,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cj9wywwja0001hgv7y87i1kgf" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cja10vhpc0007tsv7xyr70itf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -402,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cj9wywwk2000ehgv7ax468ez6" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cja10vhpc0009tsv7qrece6kh" class="article-share-link">Share</a>
       
       
     </footer>
@@ -448,7 +493,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cj9wywwjs0007hgv7b3h9qcyz" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cja10vhpc000atsv7un5ezei8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -497,7 +542,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cj9wywwjz000dhgv75g8k69r4" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cja10vhpr000etsv7fpb2s00w" class="article-share-link">Share</a>
       
       
     </footer>
@@ -545,6 +590,10 @@
       <ul>
         
           <li>
+            <a href="/2017/11/15/ReentrantLock/">ReentrantLock实现原理</a>
+          </li>
+        
+          <li>
             <a href="/2017/11/06/JUC_CountDownLatch/">JUC.CountDownLatch实现原理</a>
           </li>
         
@@ -558,10 +607,6 @@
         
           <li>
             <a href="/2017/10/28/Java_DesignPattern/">设计模式概述</a>
-          </li>
-        
-          <li>
-            <a href="/2017/10/28/Java_ThreadLocal/">ThreadLocal和InheritableThreadLocal实现原理</a>
           </li>
         
       </ul>
