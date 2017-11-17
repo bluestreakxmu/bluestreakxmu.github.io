@@ -66,6 +66,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-JUC_Semaphore" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/17/JUC_Semaphore/" class="article-date">
+  <time datetime="2017-11-17T13:40:00.000Z" itemprop="datePublished">2017-11-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/17/JUC_Semaphore/">JUC.Semaphore实现原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li><code>Semaphore</code>（信号量）通过构造函数设定一定数目的许可，通过<code>acquire()</code>方法获得许可，<code>release()</code>释放许可。</li>
+<li><code>Semaphore</code>常用来限制访问某些特定资源的线程数。</li>
+<li><code>Semaphore</code>初始化为只有一个许可时，称为<em>binary semaphore</em>，变成了一种互斥锁。</li>
+<li><code>Semaphore</code>可以通过构造器参数设置成公平和非公平模式。</li>
+</ul>
+        
+          <p class="article-more-link">
+            <a href="/2017/11/17/JUC_Semaphore/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/11/17/JUC_Semaphore/" data-id="cja3ymc3v0001qov70ucqvxzg" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-ReentrantLock" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/11/15/ReentrantLock/" class="article-date">
@@ -101,7 +151,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/11/15/ReentrantLock/" data-id="cja10vhpr000htsv7l7m6uai6" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/11/15/ReentrantLock/" data-id="cja3ymc52000iqov7gudk1rms" class="article-share-link">Share</a>
       
       
     </footer>
@@ -151,7 +201,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cja10vhog0001tsv7yix4c963" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cja3ymc460003qov7dzmcj2ax" class="article-share-link">Share</a>
       
       
     </footer>
@@ -200,7 +250,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cja10vhow0003tsv7nz7ndng4" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cja3ymc4f0006qov7barytoqm" class="article-share-link">Share</a>
       
       
     </footer>
@@ -246,7 +296,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cja10vhpc0006tsv7t4mfda86" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cja3ymc4x000fqov7t9jnie9v" class="article-share-link">Share</a>
       
       
     </footer>
@@ -302,7 +352,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cja10vhpc0005tsv7un7lqqcj" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cja3ymc4c0005qov7qwuvsy4g" class="article-share-link">Share</a>
       
       
     </footer>
@@ -347,7 +397,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cja10vhpc000dtsv7te5su7uh" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cja3ymc4r000aqov7q1yd0hz6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -399,7 +449,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cja10vhpc0007tsv7xyr70itf" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cja3ymc4n0009qov7jjqtuz16" class="article-share-link">Share</a>
       
       
     </footer>
@@ -447,7 +497,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cja10vhpc0009tsv7qrece6kh" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cja3ymc56000kqov7xgd5qsa1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -493,56 +543,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cja10vhpc000atsv7un5ezei8" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Java_proxy" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/09/20/Java_proxy/" class="article-date">
-  <time datetime="2017-09-20T03:35:29.000Z" itemprop="datePublished">2017-09-20</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Java/">Java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/20/Java_proxy/">Java静态代理和动态代理简介</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="什么是代理"><a href="#什么是代理" class="headerlink" title="什么是代理"></a>什么是代理</h2><p>给某一个对象提供一个代理，并由代理对象控制对原对象的引用。在不修改源代码的前提下给类增加新功能。</p>
-<h2 id="代理的分类"><a href="#代理的分类" class="headerlink" title="代理的分类"></a>代理的分类</h2><ul>
-<li><strong>静态代理</strong>：代理类在运行前就确定了。</li>
-<li><strong>动态代理</strong>：代理类在运行的时候才动态生成。</li>
-</ul>
-        
-          <p class="article-more-link">
-            <a href="/2017/09/20/Java_proxy/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cja10vhpr000etsv7fpb2s00w" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cja3ymc4h0007qov7m05xsloq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -553,6 +554,11 @@
 
   
 
+
+  <nav id="page-nav">
+    
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+  </nav>
 
 </section>
         
@@ -590,6 +596,10 @@
       <ul>
         
           <li>
+            <a href="/2017/11/17/JUC_Semaphore/">JUC.Semaphore实现原理</a>
+          </li>
+        
+          <li>
             <a href="/2017/11/15/ReentrantLock/">ReentrantLock实现原理</a>
           </li>
         
@@ -603,10 +613,6 @@
         
           <li>
             <a href="/2017/10/29/Java_TemplateMethodPattern/">模板方法模式</a>
-          </li>
-        
-          <li>
-            <a href="/2017/10/28/Java_DesignPattern/">设计模式概述</a>
           </li>
         
       </ul>

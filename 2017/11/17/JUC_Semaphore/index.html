@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>JUC.Semaphore实现原理 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述 Semaphore（信号量）通过构造函数设定一定数目的许可，通过acquire()方法获得许可，release()释放许可。 Semaphore常用来限制访问某些特定资源的线程数。 Semaphore初始化为只有一个许可时，称为binary semaphore，变成了一种互斥锁。 Semaphore可以通过构造器参数设置成公平和非公平模式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JUC.Semaphore实现原理">
+<meta property="og:url" content="http://nullhint.org/2017/11/17/JUC_Semaphore/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="概述 Semaphore（信号量）通过构造函数设定一定数目的许可，通过acquire()方法获得许可，release()释放许可。 Semaphore常用来限制访问某些特定资源的线程数。 Semaphore初始化为只有一个许可时，称为binary semaphore，变成了一种互斥锁。 Semaphore可以通过构造器参数设置成公平和非公平模式。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2017-11-17T13:33:36.167Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JUC.Semaphore实现原理">
+<meta name="twitter:description" content="概述 Semaphore（信号量）通过构造函数设定一定数目的许可，通过acquire()方法获得许可，release()释放许可。 Semaphore常用来限制访问某些特定资源的线程数。 Semaphore初始化为只有一个许可时，称为binary semaphore，变成了一种互斥锁。 Semaphore可以通过构造器参数设置成公平和非公平模式。">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-JUC_Semaphore" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/17/JUC_Semaphore/" class="article-date">
+  <time datetime="2017-11-17T13:40:00.000Z" itemprop="datePublished">2017-11-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      JUC.Semaphore实现原理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用示例"><span class="toc-number">2.</span> <span class="toc-text">使用示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">3.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码分析"><span class="toc-number">4.</span> <span class="toc-text">源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构造函数"><span class="toc-number">4.1.</span> <span class="toc-text">构造函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#acquire-方法"><span class="toc-number">4.2.</span> <span class="toc-text">acquire()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#release-方法"><span class="toc-number">4.3.</span> <span class="toc-text">release()方法</span></a></li></ol></li></ol>
+        </div>
+        
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li><code>Semaphore</code>（信号量）通过构造函数设定一定数目的许可，通过<code>acquire()</code>方法获得许可，<code>release()</code>释放许可。</li>
+<li><code>Semaphore</code>常用来限制访问某些特定资源的线程数。</li>
+<li><code>Semaphore</code>初始化为只有一个许可时，称为<em>binary semaphore</em>，变成了一种互斥锁。</li>
+<li><code>Semaphore</code>可以通过构造器参数设置成公平和非公平模式。</li>
+</ul>
+<a id="more"></a>
+<h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h2><p>以下示例使用一个<code>Semaphore</code>去控制数据池的访问数量。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pool</span> </span>&#123;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_AVAILABLE = <span class="number">100</span>;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Semaphore available = <span class="keyword">new</span> Semaphore(MAX_AVAILABLE, <span class="keyword">true</span>);</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> Object <span class="title">getItem</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    available.acquire();</div><div class="line">    <span class="keyword">return</span> getNextAvailableItem();</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">putItem</span><span class="params">(Object x)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (markAsUnused(x))</div><div class="line">      available.release();</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">// Not a particularly efficient data structure; just for demo</span></div><div class="line"></div><div class="line">  <span class="keyword">protected</span> Object[] items = ... whatever kinds of items being managed</div><div class="line">  <span class="keyword">protected</span> <span class="keyword">boolean</span>[] used = <span class="keyword">new</span> <span class="keyword">boolean</span>[MAX_AVAILABLE];</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">synchronized</span> Object <span class="title">getNextAvailableItem</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; MAX_AVAILABLE; ++i) &#123;</div><div class="line">      <span class="keyword">if</span> (!used[i]) &#123;</div><div class="line">         used[i] = <span class="keyword">true</span>;</div><div class="line">         <span class="keyword">return</span> items[i];</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">null</span>; <span class="comment">// not reached</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">markAsUnused</span><span class="params">(Object item)</span> </span>&#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; MAX_AVAILABLE; ++i) &#123;</div><div class="line">      <span class="keyword">if</span> (item == items[i]) &#123;</div><div class="line">         <span class="keyword">if</span> (used[i]) &#123;</div><div class="line">           used[i] = <span class="keyword">false</span>;</div><div class="line">           <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">         &#125; <span class="keyword">else</span></div><div class="line">           <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p><code>Semaphore</code>使用内部类<code>Sync</code>做一系列的锁控制，该类继承自<code>AQS(AbstractQueuedSynchronizer，队列同步器)</code>，提供公平和非公平两种模式，默认是非公平模式。</p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// permits指定最大允许许可数</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Semaphore</span><span class="params">(<span class="keyword">int</span> permits)</span> </span>&#123;</div><div class="line">    sync = <span class="keyword">new</span> NonfairSync(permits);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// permits指定最大允许许可数，</span></div><div class="line"><span class="comment">// fair指定是否实现公平模式。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Semaphore</span><span class="params">(<span class="keyword">int</span> permits, <span class="keyword">boolean</span> fair)</span> </span>&#123;</div><div class="line">    sync = fair ? <span class="keyword">new</span> FairSync(permits) : <span class="keyword">new</span> NonfairSync(permits);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="acquire-方法"><a href="#acquire-方法" class="headerlink" title="acquire()方法"></a>acquire()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 使用继承自AQS的内部类Sync实现该方法，</span></div><div class="line"><span class="comment">// 默认获取1个许可。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    sync.acquireSharedInterruptibly(<span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 使用继承自AQS的内部类Sync实现该方法，</span></div><div class="line"><span class="comment">// permits参数指定一次性获取的许可数。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">(<span class="keyword">int</span> permits)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">if</span> (permits &lt; <span class="number">0</span>) <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</div><div class="line">    sync.acquireSharedInterruptibly(permits);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 1. 如果发生中断，则抛出异常。</span></div><div class="line"><span class="comment">// 2. 调用tryAcquireShared()尝试获取许可。</span></div><div class="line"><span class="comment">// 3. 如果上一步尝试获取许可失败，调用doAcquireSharedInterruptibly()把当前线程构造成节点，并加入等待队列。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquireSharedInterruptibly</span><span class="params">(<span class="keyword">int</span> arg)</span></span></div><div class="line"><span class="function">        <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">if</span> (Thread.interrupted())</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InterruptedException();</div><div class="line">    <span class="keyword">if</span> (tryAcquireShared(arg) &lt; <span class="number">0</span>)</div><div class="line">        doAcquireSharedInterruptibly(arg);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 非公平模式尝试获取许可。</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">tryAcquireShared</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> nonfairTryAcquireShared(acquires);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 减去特定数目的许可数。</span></div><div class="line"><span class="comment">// 如果结果不小于0，表示获取许可成功；如果结果小于0，标识获取许可失败。</span></div><div class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">int</span> <span class="title">nonfairTryAcquireShared</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</div><div class="line">    <span class="keyword">for</span> (;;) &#123;</div><div class="line">        <span class="keyword">int</span> available = getState();</div><div class="line">        <span class="keyword">int</span> remaining = available - acquires;</div><div class="line">        <span class="keyword">if</span> (remaining &lt; <span class="number">0</span> ||</div><div class="line">            compareAndSetState(available, remaining))</div><div class="line">            <span class="keyword">return</span> remaining;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 公平模式下尝试获取许可。</span></div><div class="line"><span class="comment">// 比非公平模式多了hasQueuedPredecessors()，该方法判断等待队列中最长等待时间的节点持有的是否为当前线程。</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">tryAcquireShared</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</div><div class="line">    <span class="keyword">for</span> (;;) &#123;</div><div class="line">        <span class="keyword">if</span> (hasQueuedPredecessors())</div><div class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">        <span class="keyword">int</span> available = getState();</div><div class="line">        <span class="keyword">int</span> remaining = available - acquires;</div><div class="line">        <span class="keyword">if</span> (remaining &lt; <span class="number">0</span> ||</div><div class="line">            compareAndSetState(available, remaining))</div><div class="line">            <span class="keyword">return</span> remaining;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 该方法主要做以下事情：</span></div><div class="line"><span class="comment">// 1. 调用addWaiter()方法，增加新节点到队列末端（该队列用双向链表实现），该节点持有当前线程的引用。</span></div><div class="line"><span class="comment">// 2. 让线程在for循环里自旋，如果节点的前继节点是head节点，尝试获取共享锁。</span></div><div class="line"><span class="comment">// 如果获取成功，调用tryAcquireShared()方法，把当前节点设置成head节点，并唤醒等待队列的后继节点，跳出循环，结束该方法。</span></div><div class="line"><span class="comment">// 3. 调用shouldParkAfterFailedAcquire()和parkAndCheckInterrupt()方法让等待节点阻塞等待。</span></div><div class="line"><span class="comment">// 4. 跳出for循环后，如果获取许可失败，则调用cancelAcquire()方法把当前节点从等待队列中移除。</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doAcquireSharedInterruptibly</span><span class="params">(<span class="keyword">int</span> arg)</span></span></div><div class="line"><span class="function">    <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">final</span> Node node = addWaiter(Node.SHARED);</div><div class="line">    <span class="keyword">boolean</span> failed = <span class="keyword">true</span>;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">for</span> (;;) &#123;</div><div class="line">            <span class="keyword">final</span> Node p = node.predecessor();</div><div class="line">            <span class="keyword">if</span> (p == head) &#123;</div><div class="line">                <span class="keyword">int</span> r = tryAcquireShared(arg);</div><div class="line">                <span class="keyword">if</span> (r &gt;= <span class="number">0</span>) &#123;</div><div class="line">                    setHeadAndPropagate(node, r);</div><div class="line">                    p.next = <span class="keyword">null</span>; <span class="comment">// help GC</span></div><div class="line">                    failed = <span class="keyword">false</span>;</div><div class="line">                    <span class="keyword">return</span>;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</div><div class="line">                parkAndCheckInterrupt())</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> InterruptedException();</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        <span class="keyword">if</span> (failed)</div><div class="line">            cancelAcquire(node);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="release-方法"><a href="#release-方法" class="headerlink" title="release()方法"></a>release()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 默认释放一个许可。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">()</span> </span>&#123;</div><div class="line">    sync.releaseShared(<span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// permits参数可以指定释放的许可数目。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">(<span class="keyword">int</span> permits)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (permits &lt; <span class="number">0</span>) <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</div><div class="line">    sync.releaseShared(permits);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 调用tryReleaseShared()尝试释放许可。</span></div><div class="line"><span class="comment">// 如果上一步尝试释放成功，调用doReleaseShared()XXXXX。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">releaseShared</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (tryReleaseShared(arg)) &#123;</div><div class="line">        doReleaseShared();</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 尝试释放许可，增加releases个许可数目。</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">tryReleaseShared</span><span class="params">(<span class="keyword">int</span> releases)</span> </span>&#123;</div><div class="line">    <span class="keyword">for</span> (;;) &#123;</div><div class="line">        <span class="keyword">int</span> current = getState();</div><div class="line">        <span class="keyword">int</span> next = current + releases;</div><div class="line">        <span class="keyword">if</span> (next &lt; current) <span class="comment">// overflow</span></div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Maximum permit count exceeded"</span>);</div><div class="line">        <span class="keyword">if</span> (compareAndSetState(current, next))</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 调用unparkSuccessor()唤醒head的后继节点。</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doReleaseShared</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">for</span> (;;) &#123;</div><div class="line">        Node h = head;</div><div class="line">        <span class="keyword">if</span> (h != <span class="keyword">null</span> &amp;&amp; h != tail) &#123;</div><div class="line">            <span class="keyword">int</span> ws = h.waitStatus;</div><div class="line">            <span class="keyword">if</span> (ws == Node.SIGNAL) &#123;</div><div class="line">                <span class="keyword">if</span> (!compareAndSetWaitStatus(h, Node.SIGNAL, <span class="number">0</span>))</div><div class="line">                    <span class="keyword">continue</span>;            <span class="comment">// loop to recheck cases</span></div><div class="line">                unparkSuccessor(h);</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (ws == <span class="number">0</span> &amp;&amp;</div><div class="line">                     !compareAndSetWaitStatus(h, <span class="number">0</span>, Node.PROPAGATE))</div><div class="line">                <span class="keyword">continue</span>;                <span class="comment">// loop on failed CAS</span></div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (h == head)                   <span class="comment">// loop if head changed</span></div><div class="line">            <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/11/17/JUC_Semaphore/" data-id="cja3ymc3v0001qov70ucqvxzg" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/11/15/ReentrantLock/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ReentrantLock实现原理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/17/JUC_Semaphore/">JUC.Semaphore实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/15/ReentrantLock/">ReentrantLock实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/06/JUC_CountDownLatch/">JUC.CountDownLatch实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/29/Java_BuilderPattern/">建造者（生成器）模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/29/Java_TemplateMethodPattern/">模板方法模式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2017 Xibo Li&nbsp;&nbsp;&nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	<script src="/js/gotop.js"></script>
+	<!--
+	<script src="/js/gotop.js"></script>
+	-->
+
+</div>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
