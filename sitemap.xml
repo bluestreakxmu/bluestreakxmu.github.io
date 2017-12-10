@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://nullhint.org/2017/12/10/Java_CommandPattern/</loc>
+    
+    <lastmod>2017-12-10T14:53:51.284Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://nullhint.org/2017/11/17/JUC_Semaphore/</loc>
     
     <lastmod>2017-11-17T13:33:36.167Z</lastmod>

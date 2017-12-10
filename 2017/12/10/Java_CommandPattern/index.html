@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>命令模式 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="定义将一个请求封装成一个对象，从而让你使用不同的请求把客户端参数化，对请求排队或者记录请求日志，可以提供命令的撤销和恢复功能。Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support">
+<meta property="og:type" content="article">
+<meta property="og:title" content="命令模式">
+<meta property="og:url" content="http://nullhint.org/2017/12/10/Java_CommandPattern/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="定义将一个请求封装成一个对象，从而让你使用不同的请求把客户端参数化，对请求排队或者记录请求日志，可以提供命令的撤销和恢复功能。Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://owucj827k.bkt.clouddn.com/designpattern/commandpattern/CommandPatternCustomClassUML1.jpg">
+<meta property="og:updated_time" content="2017-12-10T14:53:51.284Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="命令模式">
+<meta name="twitter:description" content="定义将一个请求封装成一个对象，从而让你使用不同的请求把客户端参数化，对请求排队或者记录请求日志，可以提供命令的撤销和恢复功能。Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support">
+<meta name="twitter:image" content="http://owucj827k.bkt.clouddn.com/designpattern/commandpattern/CommandPatternCustomClassUML1.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java_CommandPattern" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/10/Java_CommandPattern/" class="article-date">
+  <time datetime="2017-12-10T15:00:00.000Z" itemprop="datePublished">2017-12-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/设计模式/">设计模式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      命令模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义"><span class="toc-number">1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#要点"><span class="toc-number">2.</span> <span class="toc-text">要点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通用类图"><span class="toc-number">3.</span> <span class="toc-text">通用类图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通用代码"><span class="toc-number">4.</span> <span class="toc-text">通用代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#通用Receiver类"><span class="toc-number">4.1.</span> <span class="toc-text">通用Receiver类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具体Receiver类"><span class="toc-number">4.2.</span> <span class="toc-text">具体Receiver类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#抽象的Command类"><span class="toc-number">4.3.</span> <span class="toc-text">抽象的Command类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具体的Command类"><span class="toc-number">4.4.</span> <span class="toc-text">具体的Command类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#调用者Invoker类"><span class="toc-number">4.5.</span> <span class="toc-text">调用者Invoker类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#场景类"><span class="toc-number">4.6.</span> <span class="toc-text">场景类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">5.</span> <span class="toc-text">参考文档</span></a></li></ol>
+        </div>
+        
+        <h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>将一个请求封装成一个对象，从而让你使用不同的请求把客户端参数化，对请求排队或者记录请求日志，可以提供命令的撤销和恢复功能。<br>Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support undoable operations.</p>
+<h2 id="要点"><a href="#要点" class="headerlink" title="要点"></a>要点</h2><ul>
+<li>命令模式将发出请求的对象和执行请求的对象解耦。</li>
+<li>在被解耦的两者之间是通过命令对象进行沟通的，命令对象封装了接收者和一个或一组动作。</li>
+</ul>
+<a id="more"></a>
+<h2 id="通用类图"><a href="#通用类图" class="headerlink" title="通用类图"></a>通用类图</h2><p><img src="http://owucj827k.bkt.clouddn.com/designpattern/commandpattern/CommandPatternCustomClassUML1.jpg" alt="命令模式通用类图"></p>
+<p>在该类图中，有三个角色：</p>
+<ul>
+<li><p>Recieve接收者角色<br>该角色就是干活的角色，命令传递到这里是应该被执行的。</p>
+</li>
+<li><p>Command命令角色<br>需要执行的所有命令都在这里声明。</p>
+</li>
+<li><p>Invoker调用者角色<br>接收到命令，并执行命令。</p>
+</li>
+</ul>
+<h2 id="通用代码"><a href="#通用代码" class="headerlink" title="通用代码"></a>通用代码</h2><h3 id="通用Receiver类"><a href="#通用Receiver类" class="headerlink" title="通用Receiver类"></a>通用Receiver类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Receiver</span> </span>&#123;</div><div class="line">    <span class="comment">// 抽象接收者，定义每个接收者都必须完成的业务</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="具体Receiver类"><a href="#具体Receiver类" class="headerlink" title="具体Receiver类"></a>具体Receiver类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteReceiver1</span> <span class="keyword">extends</span> <span class="title">Receiver</span> </span>&#123;</div><div class="line">    <span class="comment">// 每个接收者都必须处理一定的业务逻辑</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteReceiver2</span> <span class="keyword">extends</span> <span class="title">Receiver</span> </span>&#123;</div><div class="line">    <span class="comment">// 每个接收者都必须处理一定的业务逻辑</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="抽象的Command类"><a href="#抽象的Command类" class="headerlink" title="抽象的Command类"></a>抽象的Command类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Command</span> </span>&#123;</div><div class="line">    <span class="comment">// 每个命令类都必须有一个执行命令的方法</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="具体的Command类"><a href="#具体的Command类" class="headerlink" title="具体的Command类"></a>具体的Command类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteCommand1</span> <span class="keyword">extends</span> <span class="title">Command</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> Receiver receiver;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteCommand1</span><span class="params">(Receiver _receiver)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.receiver = _receiver;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123;</div><div class="line">        receiver.doSomething();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteCommand2</span> <span class="keyword">extends</span> <span class="title">Command</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> Receiver receiver;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteCommand2</span><span class="params">(Receiver _receiver)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.receiver = _receiver;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123;</div><div class="line">        receiver.doSomething();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="调用者Invoker类"><a href="#调用者Invoker类" class="headerlink" title="调用者Invoker类"></a>调用者Invoker类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Invoker</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> Command command;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCommand</span><span class="params">(Command command)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.command = command;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">action</span><span class="params">()</span> </span>&#123;</div><div class="line">        command.execute();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="场景类"><a href="#场景类" class="headerlink" title="场景类"></a>场景类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Invoker invoker = <span class="keyword">new</span> Invoker();</div><div class="line"></div><div class="line">        Receiver receiver = <span class="keyword">new</span> ConcreteReceiver1();</div><div class="line">        Command command = <span class="keyword">new</span> ConcreteCommand1(receiver);</div><div class="line">        invoker.setCommand(command);</div><div class="line">        invoker.action();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p>《Head First设计模式》<br>《设计模式之禅》</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/12/10/Java_CommandPattern/" data-id="cjb0w3t2l000550v7bo89mobl" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/11/17/JUC_Semaphore/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">JUC.Semaphore实现原理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/12/10/Java_CommandPattern/">命令模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/17/JUC_Semaphore/">JUC.Semaphore实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/15/ReentrantLock/">ReentrantLock实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/06/JUC_CountDownLatch/">JUC.CountDownLatch实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/29/Java_BuilderPattern/">建造者（生成器）模式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2017 Xibo Li&nbsp;&nbsp;&nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	<script src="/js/gotop.js"></script>
+	<!--
+	<script src="/js/gotop.js"></script>
+	-->
+
+</div>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

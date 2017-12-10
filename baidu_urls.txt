@@ -1,1 +1,1 @@
-http://nullhint.org/2017/11/17/JUC_Semaphore/
+http://nullhint.org/2017/12/10/Java_CommandPattern/
