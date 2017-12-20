@@ -66,6 +66,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-JUC_CyclicBarrier" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/30/JUC_CyclicBarrier/" class="article-date">
+  <time datetime="2017-12-30T02:00:00.000Z" itemprop="datePublished">2017-12-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/30/JUC_CyclicBarrier/">JUC.CyclicBarrier实现原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><code>CyclicBarrier</code>是一个同步辅助类，允许一组线程互相等待，直到到达某个公共屏障点。因为该barrier在释放等待线程后可以重用，所以称它为循环的barrier。<br>（A synchronization aid that allows a set of threads to all wait for each other to reach a common barrier point.  CyclicBarriers are useful in programs involving a fixed sized party of threads that must occasionally wait for each other.）</p>
+<h2 id="CountDownLatch-vs-CyclicBarrier"><a href="#CountDownLatch-vs-CyclicBarrier" class="headerlink" title="CountDownLatch vs CyclicBarrier"></a>CountDownLatch vs CyclicBarrier</h2><ul>
+<li>一旦满足barrier条件后，<code>CyclicBarrier</code>可以执行一个（可选的）<code>Runnable</code>任务。</li>
+<li>所有等待线程被释放后，<code>CyclicBarrier</code>是可以重用的。</li>
+<li><code>CyclicBarrier</code>常用于复杂的并行计算。</li>
+</ul>
+        
+          <p class="article-more-link">
+            <a href="/2017/12/30/JUC_CyclicBarrier/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/12/30/JUC_CyclicBarrier/" data-id="cjbf483ex0003e8v7ls7b0epb" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Java_CommandPattern" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/12/10/Java_CommandPattern/" class="article-date">
@@ -105,7 +155,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/12/10/Java_CommandPattern/" data-id="cjb0w3t2l000550v7bo89mobl" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/12/10/Java_CommandPattern/" data-id="cjbf483f40007e8v7xlus7van" class="article-share-link">Share</a>
       
       
     </footer>
@@ -155,7 +205,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/11/17/JUC_Semaphore/" data-id="cjb0w3t2q000750v7491us7va" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/11/17/JUC_Semaphore/" data-id="cjbf483dz0001e8v7fj19jh8p" class="article-share-link">Share</a>
       
       
     </footer>
@@ -200,7 +250,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/11/15/ReentrantLock/" data-id="cjb0w3t37000k50v79bvl8ibe" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/11/15/ReentrantLock/" data-id="cjbf483fm000pe8v7uppvcpft" class="article-share-link">Share</a>
       
       
     </footer>
@@ -250,7 +300,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cjb0w3t2g000350v7dmpxnrt0" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cjbf483f30006e8v7emug0njy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -299,7 +349,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cjb0w3t27000150v7f0m8so4u" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cjbf483f10005e8v7asmvgvn8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -345,7 +395,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cjb0w3t2y000d50v7zwyyydb1" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cjbf483fj000ne8v7cb5kdj05" class="article-share-link">Share</a>
       
       
     </footer>
@@ -401,7 +451,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cjb0w3t2u000950v7ucgzjqyt" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cjbf483f90009e8v7uh8dhvsi" class="article-share-link">Share</a>
       
       
     </footer>
@@ -446,7 +496,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cjb0w3t39000n50v7qu8glszw" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cjbf483fe000ie8v7o8prt7kx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -498,55 +548,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cjb0w3t2o000650v75brixaa5" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Java_Singleton" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/12/Java_Singleton/" class="article-date">
-  <time datetime="2017-10-12T13:00:00.000Z" itemprop="datePublished">2017-10-12</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/设计模式/">设计模式</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/12/Java_Singleton/">Java单例模式实现方式</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p><strong>立即加载/“饿汉模式”：</strong>使用类的时候已经创建对象实例。<br><strong>延迟加载/“懒汉模式”：</strong>对象实例的创建延迟到方法调用时。</p>
-</blockquote>
-<h2 id="使用DCL（Double-Check-Locking）双检查锁机制实现单例模式"><a href="#使用DCL（Double-Check-Locking）双检查锁机制实现单例模式" class="headerlink" title="使用DCL（Double-Check Locking）双检查锁机制实现单例模式"></a>使用DCL（Double-Check Locking）双检查锁机制实现单例模式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * 定义私有构造器防止被外部实例化。</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// Note：注意需要使用volatile。</span></div><div class="line">    <span class="comment">// 另外，JDK1.5之前无法安全地使用DCL的原因是volatile屏蔽指令重排序的语义在JDK1.5中才被完全修复。</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == singleton) &#123;</div><div class="line">            <span class="keyword">synchronized</span> (Singleton.class) &#123;</div><div class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == singleton) &#123;</div><div class="line">                    singleton = <span class="keyword">new</span> Singleton();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-        
-          <p class="article-more-link">
-            <a href="/2017/10/12/Java_Singleton/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cjb0w3t31000f50v7u189nscj" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cjbf483fb000de8v79kzkbcf3" class="article-share-link">Share</a>
       
       
     </footer>
@@ -599,6 +601,10 @@
       <ul>
         
           <li>
+            <a href="/2017/12/30/JUC_CyclicBarrier/">JUC.CyclicBarrier实现原理</a>
+          </li>
+        
+          <li>
             <a href="/2017/12/10/Java_CommandPattern/">命令模式</a>
           </li>
         
@@ -612,10 +618,6 @@
         
           <li>
             <a href="/2017/11/06/JUC_CountDownLatch/">JUC.CountDownLatch实现原理</a>
-          </li>
-        
-          <li>
-            <a href="/2017/10/29/Java_BuilderPattern/">建造者（生成器）模式</a>
           </li>
         
       </ul>

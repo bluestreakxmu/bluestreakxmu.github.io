@@ -4,6 +4,24 @@
 
     
   <url>
+    <loc>http://nullhint.org/2017/12/30/JUC_CyclicBarrier/</loc>
+    <lastmod>2017-12-20T13:49:58.814Z</lastmod>
+    <data>
+        <display>
+        <title>JUC.CyclicBarrier实现原理</title>
+        <pubTime>2017-12-30T02:00:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="JDK源码" url="http://nullhint.org/categories/JDK%E6%BA%90%E7%A0%81/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://nullhint.org/2017/12/10/Java_CommandPattern/</loc>
     <lastmod>2017-12-10T14:53:51.284Z</lastmod>
     <data>

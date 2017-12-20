@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://nullhint.org/2017/12/30/JUC_CyclicBarrier/</loc>
+    
+    <lastmod>2017-12-20T13:49:58.814Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://nullhint.org/2017/12/10/Java_CommandPattern/</loc>
     
     <lastmod>2017-12-10T14:53:51.284Z</lastmod>
