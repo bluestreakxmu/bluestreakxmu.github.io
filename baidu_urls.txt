@@ -1,1 +1,1 @@
-http://nullhint.org/2017/12/30/JUC_CyclicBarrier/
+http://nullhint.org/2017/12/20/JUC_CyclicBarrier/
