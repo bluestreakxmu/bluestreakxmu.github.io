@@ -66,6 +66,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Java_ConcurrentHashMap" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/01/11/Java_ConcurrentHashMap/" class="article-date">
+  <time datetime="2018-01-11T12:00:00.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/11/Java_ConcurrentHashMap/">JUC.ConcurrentHashMap实现原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><code>ConcurrentHashMap</code>是一个支持并发读写和自定义并发级别的Hash Table。</p>
+<p>主要特性如下：</p>
+<ul>
+<li><code>ConcurrentHashMap</code>是线程安全的。</li>
+<li><code>ConcurrentHashMap</code>使用锁分段技术，在执行写操作时，只锁住部分的Map。</li>
+<li><code>ConcurrentHashMap</code>的key和value不允许为null。</li>
+<li><code>ConcurrentHashMap</code>返回的迭代器是弱一致性、fail-safe的并且不会抛出<code>ConcurrentModificationException</code>异常。</li>
+</ul>
+        
+          <p class="article-more-link">
+            <a href="/2018/01/11/Java_ConcurrentHashMap/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2018/01/11/Java_ConcurrentHashMap/" data-id="cjcafgt0d00069cv7dadl1e95" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Java_ThreadPool" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/12/29/Java_ThreadPool/" class="article-date">
@@ -105,7 +157,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/12/29/Java_ThreadPool/" data-id="cjcaf7919000nvcv70stg08nl" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/12/29/Java_ThreadPool/" data-id="cjcafgt17000u9cv7pes29p4c" class="article-share-link">Share</a>
       
       
     </footer>
@@ -155,7 +207,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/12/20/JUC_CyclicBarrier/" data-id="cjcaf790e0005vcv7fy3urxnf" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/12/20/JUC_CyclicBarrier/" data-id="cjcafgt0500039cv7dqytwbou" class="article-share-link">Share</a>
       
       
     </footer>
@@ -204,7 +256,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/12/10/Java_CommandPattern/" data-id="cjcaf790t0009vcv7klnl1o3g" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/12/10/Java_CommandPattern/" data-id="cjcafgt0a00059cv74gj8uf9t" class="article-share-link">Share</a>
       
       
     </footer>
@@ -254,7 +306,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/11/17/JUC_Semaphore/" data-id="cjcaf790e0001vcv7v1pvcrgj" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/11/17/JUC_Semaphore/" data-id="cjcafgt0f00079cv76nql0kyz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -299,7 +351,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/11/15/ReentrantLock/" data-id="cjcaf7919000qvcv7ifpdugrx" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/11/15/ReentrantLock/" data-id="cjcafgt14000r9cv7n3i36a7t" class="article-share-link">Share</a>
       
       
     </footer>
@@ -349,7 +401,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cjcaf790t0006vcv7924g1f86" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cjcafgszy00019cv7ft7a8ibd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -398,7 +450,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cjcaf790e0003vcv7p8tb01bn" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cjcafgt0l000a9cv73b5wwmq8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -444,7 +496,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cjcaf7919000hvcv7gohrs8t6" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cjcafgt0n000d9cv7raqkglmo" class="article-share-link">Share</a>
       
       
     </footer>
@@ -500,52 +552,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cjcaf790t000avcv7mjxopuef" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Java_ThreadLocal" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/28/Java_ThreadLocal/" class="article-date">
-  <time datetime="2017-10-28T04:10:00.000Z" itemprop="datePublished">2017-10-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/28/Java_ThreadLocal/">ThreadLocal和InheritableThreadLocal实现原理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>类<code>Threadlocal</code>主要解决的是每个线程绑定自己的值，可以将<code>ThreadLocal</code>类比喻成全局存放数据的盒子，盒子中可以存储每个线程的私有数据。<br>子线程和父线程各有各自所拥有的值。</p>
-        
-          <p class="article-more-link">
-            <a href="/2017/10/28/Java_ThreadLocal/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cjcaf7919000jvcv71vx6h6oa" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cjcafgt0k00099cv79j17jzsm" class="article-share-link">Share</a>
       
       
     </footer>
@@ -585,7 +592,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
     </div>
   </div>
 
@@ -596,6 +603,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/01/11/Java_ConcurrentHashMap/">JUC.ConcurrentHashMap实现原理</a>
+          </li>
         
           <li>
             <a href="/2017/12/29/Java_ThreadPool/">Java线程池实现原理</a>
@@ -611,10 +622,6 @@
         
           <li>
             <a href="/2017/11/17/JUC_Semaphore/">JUC.Semaphore实现原理</a>
-          </li>
-        
-          <li>
-            <a href="/2017/11/15/ReentrantLock/">ReentrantLock实现原理</a>
           </li>
         
       </ul>
