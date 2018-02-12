@@ -4,6 +4,24 @@
 
     
   <url>
+    <loc>http://nullhint.org/2018/02/12/JVM_HelloWorld/</loc>
+    <lastmod>2018-02-12T09:29:07.107Z</lastmod>
+    <data>
+        <display>
+        <title>Hello World程序执行过程</title>
+        <pubTime>2018-02-12T10:00:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="JVM" url="http://nullhint.org/categories/JVM/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://nullhint.org/2018/01/11/Java_ConcurrentHashMap/</loc>
     <lastmod>2018-01-11T11:45:31.840Z</lastmod>
     <data>
