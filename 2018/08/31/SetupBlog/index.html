@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>Hexo+GitHub+Coding搭建博客 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述通过使用Hexo生成静态博客页面，同时发布到Github Page和Coding Page上（为了同时支持谷歌和百度爬虫检索），这样就可以展示个人博客了。 工具介绍 Hexo：一款生成静态博客的框架，支持Markdown，自定义渲染静态页面。 GitHub Pages：用来展示个人Github项目的页面，可以用来部署个人博客。 Coding Pages：类似Github Pages，只是Cod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo+GitHub+Coding搭建博客">
+<meta property="og:url" content="http://nullhint.org/2018/08/31/SetupBlog/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="概述通过使用Hexo生成静态博客页面，同时发布到Github Page和Coding Page上（为了同时支持谷歌和百度爬虫检索），这样就可以展示个人博客了。 工具介绍 Hexo：一款生成静态博客的框架，支持Markdown，自定义渲染静态页面。 GitHub Pages：用来展示个人Github项目的页面，可以用来部署个人博客。 Coding Pages：类似Github Pages，只是Cod">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://owucj827k.bkt.clouddn.com/dns/MyDNSPod.PNGMyDNSPod.PNG">
+<meta property="og:updated_time" content="2018-08-31T15:20:44.266Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo+GitHub+Coding搭建博客">
+<meta name="twitter:description" content="概述通过使用Hexo生成静态博客页面，同时发布到Github Page和Coding Page上（为了同时支持谷歌和百度爬虫检索），这样就可以展示个人博客了。 工具介绍 Hexo：一款生成静态博客的框架，支持Markdown，自定义渲染静态页面。 GitHub Pages：用来展示个人Github项目的页面，可以用来部署个人博客。 Coding Pages：类似Github Pages，只是Cod">
+<meta name="twitter:image" content="http://owucj827k.bkt.clouddn.com/dns/MyDNSPod.PNGMyDNSPod.PNG">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-SetupBlog" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/31/SetupBlog/" class="article-date">
+  <time datetime="2018-08-31T15:30:00.000Z" itemprop="datePublished">2018-08-31</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/博客搭建/">博客搭建</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Hexo+GitHub+Coding搭建博客
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工具介绍"><span class="toc-number">2.</span> <span class="toc-text">工具介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hexo安装使用和主题优化"><span class="toc-number">3.</span> <span class="toc-text">Hexo安装使用和主题优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-number">3.1.</span> <span class="toc-text">安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装前置条件"><span class="toc-number">3.1.1.</span> <span class="toc-text">安装前置条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装Hexo"><span class="toc-number">3.1.2.</span> <span class="toc-text">安装Hexo</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用"><span class="toc-number">3.2.</span> <span class="toc-text">使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#初始化Hexo"><span class="toc-number">3.2.1.</span> <span class="toc-text">初始化Hexo</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#新增文件"><span class="toc-number">3.2.2.</span> <span class="toc-text">新增文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#生成静态页面"><span class="toc-number">3.2.3.</span> <span class="toc-text">生成静态页面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署本地Server"><span class="toc-number">3.2.4.</span> <span class="toc-text">部署本地Server</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主题优化"><span class="toc-number">3.3.</span> <span class="toc-text">主题优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置并发布到GitHub-Pages"><span class="toc-number">4.</span> <span class="toc-text">配置并发布到GitHub Pages</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置GitHub-Pages"><span class="toc-number">4.1.</span> <span class="toc-text">配置GitHub Pages</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#发布Hexo生成好的静态页面到GitHub-Pages"><span class="toc-number">4.2.</span> <span class="toc-text">发布Hexo生成好的静态页面到GitHub Pages</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置并发布到Coding-Pages"><span class="toc-number">5.</span> <span class="toc-text">配置并发布到Coding Pages</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置Coding-Pages"><span class="toc-number">5.1.</span> <span class="toc-text">配置Coding Pages</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#发布Hexo生成好的静态页面到Coding-Pages"><span class="toc-number">5.2.</span> <span class="toc-text">发布Hexo生成好的静态页面到Coding Pages</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为博客自定义域名"><span class="toc-number">6.</span> <span class="toc-text">为博客自定义域名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#申请域名"><span class="toc-number">6.1.</span> <span class="toc-text">申请域名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置DNS映射到DNSPod"><span class="toc-number">6.2.</span> <span class="toc-text">配置DNS映射到DNSPod</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在DNSPod页面配置DNS映射到GitHub和Coding地址"><span class="toc-number">6.3.</span> <span class="toc-text">在DNSPod页面配置DNS映射到GitHub和Coding地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在GitHub-Pages和Coding-Pages项目根目录增加CNAME"><span class="toc-number">6.4.</span> <span class="toc-text">在GitHub Pages和Coding Pages项目根目录增加CNAME</span></a></li></ol></li></ol>
+        </div>
+        
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>通过使用<code>Hexo</code>生成静态博客页面，同时发布到<code>Github Page</code>和<code>Coding Page</code>上（为了同时支持谷歌和百度爬虫检索），这样就可以展示个人博客了。</p>
+<h2 id="工具介绍"><a href="#工具介绍" class="headerlink" title="工具介绍"></a>工具介绍</h2><ul>
+<li><strong><a href="https://github.com/hexojs/hexo" target="_blank" rel="external">Hexo</a></strong>：一款生成静态博客的框架，支持Markdown，自定义渲染静态页面。</li>
+<li><strong><a href="https://pages.github.com/" target="_blank" rel="external">GitHub Pages</a></strong>：用来展示个人Github项目的页面，可以用来部署个人博客。</li>
+<li><strong><a href="https://coding.net/help/doc/pages" target="_blank" rel="external">Coding Pages</a></strong>：类似<code>Github Pages</code>，只是<code>Coding Pages</code>支持百度爬虫检索，而<code>Github Pages</code>无法被百度爬虫检索。</li>
+<li><strong><a href="https://www.godaddy.com" target="_blank" rel="external">GoDaddy</a></strong>：申请个人域名的网站。</li>
+<li><strong><a href="www.dnspod.cn">DNSPod</a></strong>：解析域名的网站，更快更稳定。</li>
+</ul>
+<a id="more"></a>
+<h2 id="Hexo安装使用和主题优化"><a href="#Hexo安装使用和主题优化" class="headerlink" title="Hexo安装使用和主题优化"></a>Hexo安装使用和主题优化</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><h4 id="安装前置条件"><a href="#安装前置条件" class="headerlink" title="安装前置条件"></a>安装前置条件</h4><p>安装Hexo前需要先安装以下软件：</p>
+<ul>
+<li><strong><a href="https://nodejs.org/en/" target="_blank" rel="external">Node.js</a></strong>：Hexo运行环境。</li>
+<li><strong><a href="https://git-scm.com/" target="_blank" rel="external">Git</a></strong>：Hexo初始化时需要使用Git克隆项目。</li>
+</ul>
+<h4 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h4><p>Windows安装Git后，随便找个文件夹，按下鼠标右键，点击<code>Git Bash Here</code>，在以上命令行界面运行以下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install hexo-cli -g</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>可通过<code>hexo -v</code>查看是否安装成功。</p>
+</blockquote>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><h4 id="初始化Hexo"><a href="#初始化Hexo" class="headerlink" title="初始化Hexo"></a>初始化Hexo</h4><p>通过<code>Git Bash Here</code>命令行界面，输入以下命令，就可以新增一个名为<code>blog</code>的文件夹，里面存放Hexo所有文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo init blog</div></pre></td></tr></table></figure>
+<p><code>blog</code>文件夹目录结构如下：</p>
+<blockquote>
+<p><strong>node_modules</strong><br><strong>scaffolds</strong><br><strong>source</strong>：所有博客文章都放在<code>source/_posts</code>目录下。<br><strong>themes</strong>：存放主题文件。<br><strong>.gitignore</strong><br><strong>_config.yml</strong>：配置文件。<br><strong>package.json</strong></p>
+</blockquote>
+<h4 id="新增文件"><a href="#新增文件" class="headerlink" title="新增文件"></a>新增文件</h4><p>进入<code>blog</code>文件夹，在<code>source/_posts</code>目录下新增<code>MyPostName.md</code>或运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"MyPostName"</span></div></pre></td></tr></table></figure>
+<h4 id="生成静态页面"><a href="#生成静态页面" class="headerlink" title="生成静态页面"></a>生成静态页面</h4><p>进入<code>blog</code>文件夹，运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ hexo g 或 </div><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
+<p>运行完成后，会生成<code>public</code>文件夹来存放静态文件。</p>
+<blockquote>
+<p>注意：调用<code>hexo g</code>前要先使用命令<code>hexo clean</code>清理<code>public</code>目录。</p>
+</blockquote>
+<h4 id="部署本地Server"><a href="#部署本地Server" class="headerlink" title="部署本地Server"></a>部署本地Server</h4><p>进入<code>blog</code>文件夹，运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+<p>运行完成后，可以通过<strong><a href="http://localhost:4000" target="_blank" rel="external">http://localhost:4000</a></strong>访问本地博客。</p>
+<h3 id="主题优化"><a href="#主题优化" class="headerlink" title="主题优化"></a>主题优化</h3><p>所有主题都放在<code>blog/themes</code>文件夹下，默认的主题是<code>landscape</code>。<br>可以在<a href="https://github.com/hexojs/hexo/wiki/Themes" target="_blank" rel="external">这里</a>下载主题，保存在<code>themes</code>目录下，然后修改<code>_config.yml</code>文件的以下内容：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Extensions</span></div><div class="line"><span class="comment">## Plugins: https://hexo.io/plugins/</span></div><div class="line"><span class="comment">## Themes: https://hexo.io/themes/</span></div><div class="line"><span class="attr">theme:</span> <span class="string">landscape</span></div></pre></td></tr></table></figure>
+<h2 id="配置并发布到GitHub-Pages"><a href="#配置并发布到GitHub-Pages" class="headerlink" title="配置并发布到GitHub Pages"></a>配置并发布到GitHub Pages</h2><h3 id="配置GitHub-Pages"><a href="#配置GitHub-Pages" class="headerlink" title="配置GitHub Pages"></a>配置GitHub Pages</h3><p><code>GitHub Pages</code>配置参照<a href="https://pages.github.com/" target="_blank" rel="external">官方教程</a>。<br>配置好之后就可以通过<a href="http://{username}.github.io" target="_blank" rel="external">http://{username}.github.io</a>访问<code>GitHub Pages</code>页面。</p>
+<h3 id="发布Hexo生成好的静态页面到GitHub-Pages"><a href="#发布Hexo生成好的静态页面到GitHub-Pages" class="headerlink" title="发布Hexo生成好的静态页面到GitHub Pages"></a>发布Hexo生成好的静态页面到GitHub Pages</h3><p>前面步骤中运行<code>Hexo g</code>命令会在<code>public</code>文件夹中生成所有静态页面，把该文件夹里面的所有内容发布到<code>GitHub Pages</code>项目即可。</p>
+<h2 id="配置并发布到Coding-Pages"><a href="#配置并发布到Coding-Pages" class="headerlink" title="配置并发布到Coding Pages"></a>配置并发布到Coding Pages</h2><h3 id="配置Coding-Pages"><a href="#配置Coding-Pages" class="headerlink" title="配置Coding Pages"></a>配置Coding Pages</h3><p><code>Coding Pages</code>配置参照<a href="https://coding.net/v2/pages/" target="_blank" rel="external">官方教程</a>。<br>配置好后就可以通过<a href="http://{username}.coding.me" target="_blank" rel="external">http://{username}.coding.me</a>访问<code>Coding Pages</code>页面。</p>
+<h3 id="发布Hexo生成好的静态页面到Coding-Pages"><a href="#发布Hexo生成好的静态页面到Coding-Pages" class="headerlink" title="发布Hexo生成好的静态页面到Coding Pages"></a>发布Hexo生成好的静态页面到Coding Pages</h3><p>前面步骤中运行<code>Hexo g</code>命令会在<code>public</code>文件夹中生成所有静态页面，把该文件夹里面的所有内容发布到<code>Coding Pages</code>项目即可。</p>
+<h2 id="为博客自定义域名"><a href="#为博客自定义域名" class="headerlink" title="为博客自定义域名"></a>为博客自定义域名</h2><h3 id="申请域名"><a href="#申请域名" class="headerlink" title="申请域名"></a>申请域名</h3><p>去<a href="https://sg.godaddy.com/zh/" target="_blank" rel="external">GoDaddy</a>申请域名。</p>
+<h3 id="配置DNS映射到DNSPod"><a href="#配置DNS映射到DNSPod" class="headerlink" title="配置DNS映射到DNSPod"></a>配置DNS映射到DNSPod</h3><p>在GoDaddy管理页面增加以下域名服务器：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">f1g1ns1.dnspod.net</div><div class="line">f1g1ns2.dnspod.net</div></pre></td></tr></table></figure>
+<h3 id="在DNSPod页面配置DNS映射到GitHub和Coding地址"><a href="#在DNSPod页面配置DNS映射到GitHub和Coding地址" class="headerlink" title="在DNSPod页面配置DNS映射到GitHub和Coding地址"></a>在DNSPod页面配置DNS映射到GitHub和Coding地址</h3><p>配置内容如下图所示：<br><img src="http://owucj827k.bkt.clouddn.com/dns/MyDNSPod.PNGMyDNSPod.PNG" alt="MyDNSPod"></p>
+<ul>
+<li>两个<strong>记录类型</strong>为<code>NS</code>的配置项为上一步映射到DNSPod时自动生成的。</li>
+<li>国内线路默认访问<code>Coding Pages</code>，国外线路则访问<code>GitHub Pages</code>。</li>
+</ul>
+<h3 id="在GitHub-Pages和Coding-Pages项目根目录增加CNAME"><a href="#在GitHub-Pages和Coding-Pages项目根目录增加CNAME" class="headerlink" title="在GitHub Pages和Coding Pages项目根目录增加CNAME"></a>在GitHub Pages和Coding Pages项目根目录增加CNAME</h3><p>在本地Hexo目录的<code>source</code>目录下新建名为<code>CNAME</code>的文件，内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">myDomin.xxx</div></pre></td></tr></table></figure>
+<p>重新生成静态页面并上传到GitHub，即完成自定义域名映射到GitHub上的博客。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2018/08/31/SetupBlog/" data-id="cjli5q0wo000yg0v7vfsxxzxn" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/08/28/Database_3NF/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">数据库三大范式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/博客搭建/">博客搭建</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/08/31/SetupBlog/">Hexo+GitHub+Coding搭建博客</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/28/Database_3NF/">数据库三大范式</a>
+          </li>
+        
+          <li>
+            <a href="/2018/02/12/JVM_HelloWorld/">Hello World程序执行过程</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/11/Java_ConcurrentHashMap/">JUC.ConcurrentHashMap实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/29/Java_ThreadPool/">Java线程池实现原理</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Xibo Li&nbsp;&nbsp; | &nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>&nbsp; | &nbsp;&nbsp;
+            Hosted by <a href="https://coding.net/pages" style="font-weight: bold">CODING Pages</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	<script src="/js/gotop.js"></script>
+	<!--
+	<script src="/js/gotop.js"></script>
+	-->
+
+</div>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
