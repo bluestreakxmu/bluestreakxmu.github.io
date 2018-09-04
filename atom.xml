@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://nullhint.org/"/>
-  <updated>2018-08-31T15:20:44.266Z</updated>
+  <updated>2018-09-04T00:58:50.066Z</updated>
   <id>http://nullhint.org/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spring的事务传播性与隔离级别</title>
+    <link href="http://nullhint.org/2018/09/04/SpringTransactionPropagation/"/>
+    <id>http://nullhint.org/2018/09/04/SpringTransactionPropagation/</id>
+    <published>2018-09-04T01:00:00.000Z</published>
+    <updated>2018-09-04T00:58:50.066Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul><li><p>事务最重要的两个特性，是事务的<strong>传播级别</strong>和数据<strong>隔离级别</strong>。</p><blockquote><p><strong>传播级别</strong>定义的是事务的控制范围。<br><strong>隔离级别</strong>定义的是事务在数据库读写方面的控制范围。</p></blockquote></li><li><p>都定义在Spring的<code>TransactionDefinition</code>接口中，传播性有<strong>七种</strong>，隔离级别有<strong>五种</strong>。</p><blockquote><p>（Spring3、Spring4数量都是如此）</p></blockquote></li></ul><a id="more"></a><h2 id="传播级别分类"><a href="#传播级别分类" class="headerlink" title="传播级别分类"></a>传播级别分类</h2><ul><li>具体分类如下：   </li></ul><table><thead><tr><th style="text-align:left">传播行为</th><th style="text-align:left">含义</th></tr></thead><tbody><tr><td style="text-align:left"><strong>PROPAGATION_REQUIRED</strong></td><td style="text-align:left">如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。这是最常见的选择。（Spring默认行为）</td></tr><tr><td style="text-align:left">PROPAGATION_SUPPORTS</td><td style="text-align:left">支持当前事务，如果当前没有事务，就以非事务方式执行。</td></tr><tr><td style="text-align:left">PROPAGATION_MANDATORY</td><td style="text-align:left">使用当前的事务，如果当前没有事务，就抛出异常。</td></tr><tr><td style="text-align:left">PROPAGATION_REQUIRES_NEW</td><td style="text-align:left">新建事务，如果当前存在事务，把当前事务挂起。</td></tr><tr><td style="text-align:left">PROPAGATION_NOT_SUPPORTED</td><td style="text-align:left">以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</td></tr><tr><td style="text-align:left">PROPAGATION_NEVER</td><td style="text-align:left">以非事务方式执行，如果当前存在事务，则抛出异常。</td></tr><tr><td style="text-align:left">PROPAGATION_NESTED</td><td style="text-align:left">如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作。</td></tr></tbody></table><blockquote><p>NOTE：PROPAGATION_NESTED<strong>嵌套事务</strong>：<br>嵌套是子事务套在父事务中执行，子事务是父事务的一部分，在进入子事务之前，父事务建立一个回滚点，叫<code>save point</code>，然后执行子事务，这个子事务的执行也算是父事务的一部分，然后子事务执行结束，父事务继续执行。重点就在于那个<code>save point</code>。</p></blockquote><h2 id="隔离级别分类"><a href="#隔离级别分类" class="headerlink" title="隔离级别分类"></a>隔离级别分类</h2><table><thead><tr><th style="text-align:left">隔离级别</th><th style="text-align:left">含义</th></tr></thead><tbody><tr><td style="text-align:left"><strong>ISOLATION_DEFAULT</strong></td><td style="text-align:left">这是默认值，表示使用底层数据库的默认隔离级别。对大部分数据库而言，通常这值就是ISOLATION_READ_COMMITTED。</td></tr><tr><td style="text-align:left">ISOLATION_READ_UNCOMMITTED</td><td style="text-align:left">允许读取尚未提交的更改。可能导致脏读、幻影读或不可重复读。</td></tr><tr><td style="text-align:left">ISOLATION_READ_COMMITTED</td><td style="text-align:left">允许从已经提交的并发事务读取。可防止脏读，但幻影读和不可重复读仍可能会发生。（Oracle默认级别）</td></tr><tr><td style="text-align:left">ISOLATION_REPEATABLE_READ</td><td style="text-align:left">对相同字段的多次读取的结果是一致的，除非数据被当前事务本身改变。可防止脏读和不可重复读，但幻影读仍可能发生。（MySQL默认级别）</td></tr><tr><td style="text-align:left">ISOLATION_SERIALIZABLE</td><td style="text-align:left">完全服从ACID的隔离级别，确保不发生脏读、不可重复读和幻影读。这在所有隔离级别中也是最慢的，因为它通常是通过完全锁定当前事务所涉及的数据表来完成的。</td></tr></tbody></table><ul><li><p><strong>脏读</strong><br>在A事务范围内读取B事务已修改尚未提交的值，会造成脏读。（因为B事务可能会回滚）</p></li><li><p><strong>不可重复读</strong><br>在A事务范围内多次读取某个值，结果会不一样，因为在这期间B事务修改了这个值并提交了事务。</p></li><li><p><strong>幻影读</strong><br>在A事务范围内B事务新增或删除某些值，造成条数不一致。</p></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;事务最重要的两个特性，是事务的&lt;strong&gt;传播级别&lt;/strong&gt;和数据&lt;strong&gt;隔离级别&lt;/strong&gt;。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;传播级别&lt;/strong&gt;定义的是事务的控制范围。&lt;br&gt;&lt;strong&gt;隔离级别&lt;/strong&gt;定义的是事务在数据库读写方面的控制范围。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;都定义在Spring的&lt;code&gt;TransactionDefinition&lt;/code&gt;接口中，传播性有&lt;strong&gt;七种&lt;/strong&gt;，隔离级别有&lt;strong&gt;五种&lt;/strong&gt;。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;（Spring3、Spring4数量都是如此）&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+    
+    </summary>
+    
+      <category term="Spring" scheme="http://nullhint.org/categories/Spring/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Hexo+GitHub+Coding搭建博客</title>

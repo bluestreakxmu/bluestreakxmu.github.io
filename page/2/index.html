@@ -66,6 +66,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-JUC_CountDownLatch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/06/JUC_CountDownLatch/" class="article-date">
+  <time datetime="2017-11-06T15:25:00.000Z" itemprop="datePublished">2017-11-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/06/JUC_CountDownLatch/">JUC.CountDownLatch实现原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><blockquote>
+<p><code>CountDownLatch</code>是一个同步辅助类，在完成一组正在其他线程中执行的操作之前，它允许一个或多个线程一直等待。<br>A synchronization aid that allows one or more threads to wait until a set of operations being performed in other threads completes.</p>
+</blockquote>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><blockquote>
+<p><code>CountDownLatch</code>的典型用法是将一个程序分成独立的N个子任务，并创建一个值为N的<code>CountDownLatch</code>，每个子任务执行完就调用<code>countDown()</code>，等待问题被解决的任务调用这个锁的<code>await()</code>，直到所有子任务执行完才能继续往下执行。</p>
+</blockquote>
+        
+          <p class="article-more-link">
+            <a href="/2017/11/06/JUC_CountDownLatch/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/11/06/JUC_CountDownLatch/" data-id="cjln0es5800050ov7698mjqjf" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Java_BuilderPattern" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/10/29/Java_BuilderPattern/" class="article-date">
@@ -105,7 +155,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cjli5q0vj0003g0v7d1iwf90e" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_BuilderPattern/" data-id="cjln0es5g000a0ov7qiapbz9a" class="article-share-link">Share</a>
       
       
     </footer>
@@ -151,7 +201,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cjli5q0we000og0v7f9nz5xid" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/" data-id="cjln0es5w000q0ov70s17w2qd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -207,7 +257,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cjli5q0w1000dg0v7kz7cjbpl" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_DesignPattern/" data-id="cjln0es5q000j0ov7h6bfpx9p" class="article-share-link">Share</a>
       
       
     </footer>
@@ -252,7 +302,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cjli5q0wl000wg0v7utf6e82o" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/28/Java_ThreadLocal/" data-id="cjln0es5u000n0ov75xsschwe" class="article-share-link">Share</a>
       
       
     </footer>
@@ -304,7 +354,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cjli5q0w8000jg0v7b0ygmoqr" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cjln0es5k000d0ov7d6g7zskf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -352,7 +402,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cjli5q0wb000mg0v7khyvmg3n" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cjln0es5o000h0ov7zk5c4d8s" class="article-share-link">Share</a>
       
       
     </footer>
@@ -398,7 +448,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cjli5q0w6000hg0v7ojyx8otz" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cjln0es5t000m0ov7ajrty9na" class="article-share-link">Share</a>
       
       
     </footer>
@@ -447,7 +497,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cjli5q0wi000rg0v7jm7ibaj7" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cjln0es67000z0ov7zbas35v6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -472,7 +522,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/博客搭建/">博客搭建</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/博客搭建/">博客搭建</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
     </div>
   </div>
 
@@ -487,7 +537,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
     </div>
   </div>
 
@@ -498,6 +548,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/09/04/SpringTransactionPropagation/">Spring的事务传播性与隔离级别</a>
+          </li>
         
           <li>
             <a href="/2018/08/31/SetupBlog/">Hexo+GitHub+Coding搭建博客</a>
@@ -513,10 +567,6 @@
         
           <li>
             <a href="/2018/01/11/Java_ConcurrentHashMap/">JUC.ConcurrentHashMap实现原理</a>
-          </li>
-        
-          <li>
-            <a href="/2017/12/29/Java_ThreadPool/">Java线程池实现原理</a>
           </li>
         
       </ul>

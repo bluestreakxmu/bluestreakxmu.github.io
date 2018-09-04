@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>Spring的事务传播性与隔离级别 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述 事务最重要的两个特性，是事务的传播级别和数据隔离级别。  传播级别定义的是事务的控制范围。隔离级别定义的是事务在数据库读写方面的控制范围。   都定义在Spring的TransactionDefinition接口中，传播性有七种，隔离级别有五种。  （Spring3、Spring4数量都是如此）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring的事务传播性与隔离级别">
+<meta property="og:url" content="http://nullhint.org/2018/09/04/SpringTransactionPropagation/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="概述 事务最重要的两个特性，是事务的传播级别和数据隔离级别。  传播级别定义的是事务的控制范围。隔离级别定义的是事务在数据库读写方面的控制范围。   都定义在Spring的TransactionDefinition接口中，传播性有七种，隔离级别有五种。  （Spring3、Spring4数量都是如此）">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-04T00:58:50.066Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring的事务传播性与隔离级别">
+<meta name="twitter:description" content="概述 事务最重要的两个特性，是事务的传播级别和数据隔离级别。  传播级别定义的是事务的控制范围。隔离级别定义的是事务在数据库读写方面的控制范围。   都定义在Spring的TransactionDefinition接口中，传播性有七种，隔离级别有五种。  （Spring3、Spring4数量都是如此）">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-SpringTransactionPropagation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/04/SpringTransactionPropagation/" class="article-date">
+  <time datetime="2018-09-04T01:00:00.000Z" itemprop="datePublished">2018-09-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Spring的事务传播性与隔离级别
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#传播级别分类"><span class="toc-number">2.</span> <span class="toc-text">传播级别分类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#隔离级别分类"><span class="toc-number">3.</span> <span class="toc-text">隔离级别分类</span></a></li></ol>
+        </div>
+        
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li><p>事务最重要的两个特性，是事务的<strong>传播级别</strong>和数据<strong>隔离级别</strong>。</p>
+<blockquote>
+<p><strong>传播级别</strong>定义的是事务的控制范围。<br><strong>隔离级别</strong>定义的是事务在数据库读写方面的控制范围。</p>
+</blockquote>
+</li>
+<li><p>都定义在Spring的<code>TransactionDefinition</code>接口中，传播性有<strong>七种</strong>，隔离级别有<strong>五种</strong>。</p>
+<blockquote>
+<p>（Spring3、Spring4数量都是如此）</p>
+</blockquote>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="传播级别分类"><a href="#传播级别分类" class="headerlink" title="传播级别分类"></a>传播级别分类</h2><ul>
+<li>具体分类如下：   </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">传播行为</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>PROPAGATION_REQUIRED</strong></td>
+<td style="text-align:left">如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。这是最常见的选择。（Spring默认行为）</td>
+</tr>
+<tr>
+<td style="text-align:left">PROPAGATION_SUPPORTS</td>
+<td style="text-align:left">支持当前事务，如果当前没有事务，就以非事务方式执行。</td>
+</tr>
+<tr>
+<td style="text-align:left">PROPAGATION_MANDATORY</td>
+<td style="text-align:left">使用当前的事务，如果当前没有事务，就抛出异常。</td>
+</tr>
+<tr>
+<td style="text-align:left">PROPAGATION_REQUIRES_NEW</td>
+<td style="text-align:left">新建事务，如果当前存在事务，把当前事务挂起。</td>
+</tr>
+<tr>
+<td style="text-align:left">PROPAGATION_NOT_SUPPORTED</td>
+<td style="text-align:left">以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</td>
+</tr>
+<tr>
+<td style="text-align:left">PROPAGATION_NEVER</td>
+<td style="text-align:left">以非事务方式执行，如果当前存在事务，则抛出异常。</td>
+</tr>
+<tr>
+<td style="text-align:left">PROPAGATION_NESTED</td>
+<td style="text-align:left">如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>NOTE：PROPAGATION_NESTED<strong>嵌套事务</strong>：<br>嵌套是子事务套在父事务中执行，子事务是父事务的一部分，在进入子事务之前，父事务建立一个回滚点，叫<code>save point</code>，然后执行子事务，这个子事务的执行也算是父事务的一部分，然后子事务执行结束，父事务继续执行。重点就在于那个<code>save point</code>。</p>
+</blockquote>
+<h2 id="隔离级别分类"><a href="#隔离级别分类" class="headerlink" title="隔离级别分类"></a>隔离级别分类</h2><table>
+<thead>
+<tr>
+<th style="text-align:left">隔离级别</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>ISOLATION_DEFAULT</strong></td>
+<td style="text-align:left">这是默认值，表示使用底层数据库的默认隔离级别。对大部分数据库而言，通常这值就是ISOLATION_READ_COMMITTED。</td>
+</tr>
+<tr>
+<td style="text-align:left">ISOLATION_READ_UNCOMMITTED</td>
+<td style="text-align:left">允许读取尚未提交的更改。可能导致脏读、幻影读或不可重复读。</td>
+</tr>
+<tr>
+<td style="text-align:left">ISOLATION_READ_COMMITTED</td>
+<td style="text-align:left">允许从已经提交的并发事务读取。可防止脏读，但幻影读和不可重复读仍可能会发生。（Oracle默认级别）</td>
+</tr>
+<tr>
+<td style="text-align:left">ISOLATION_REPEATABLE_READ</td>
+<td style="text-align:left">对相同字段的多次读取的结果是一致的，除非数据被当前事务本身改变。可防止脏读和不可重复读，但幻影读仍可能发生。（MySQL默认级别）</td>
+</tr>
+<tr>
+<td style="text-align:left">ISOLATION_SERIALIZABLE</td>
+<td style="text-align:left">完全服从ACID的隔离级别，确保不发生脏读、不可重复读和幻影读。这在所有隔离级别中也是最慢的，因为它通常是通过完全锁定当前事务所涉及的数据表来完成的。</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p><strong>脏读</strong><br>在A事务范围内读取B事务已修改尚未提交的值，会造成脏读。（因为B事务可能会回滚）</p>
+</li>
+<li><p><strong>不可重复读</strong><br>在A事务范围内多次读取某个值，结果会不一样，因为在这期间B事务修改了这个值并提交了事务。</p>
+</li>
+<li><p><strong>幻影读</strong><br>在A事务范围内B事务新增或删除某些值，造成条数不一致。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2018/09/04/SpringTransactionPropagation/" data-id="cjln0es61000u0ov70wnvy67j" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/08/31/SetupBlog/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hexo+GitHub+Coding搭建博客</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/博客搭建/">博客搭建</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/09/04/SpringTransactionPropagation/">Spring的事务传播性与隔离级别</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/31/SetupBlog/">Hexo+GitHub+Coding搭建博客</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/28/Database_3NF/">数据库三大范式</a>
+          </li>
+        
+          <li>
+            <a href="/2018/02/12/JVM_HelloWorld/">Hello World程序执行过程</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/11/Java_ConcurrentHashMap/">JUC.ConcurrentHashMap实现原理</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Xibo Li&nbsp;&nbsp; | &nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>&nbsp; | &nbsp;&nbsp;
+            Hosted by <a href="https://coding.net/pages" style="font-weight: bold">CODING Pages</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	<script src="/js/gotop.js"></script>
+	<!--
+	<script src="/js/gotop.js"></script>
+	-->
+
+</div>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
