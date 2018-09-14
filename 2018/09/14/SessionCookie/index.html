@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>Session与Cookie总结 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Session与Cookie分别是什么？ Cookie是HTTP头中的一个字段，浏览器对其有大小和数量限制。 Session解决了Cookie在浏览器与服务器来回传输的问题，客户端只保存Session ID，数据放在服务端。 存的都是键值对。  Session与Cookie的作用保持访问用户与后端服务器的交互状态。（因为HTTP是一种无状态协议）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Session与Cookie总结">
+<meta property="og:url" content="http://nullhint.org/2018/09/14/SessionCookie/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="Session与Cookie分别是什么？ Cookie是HTTP头中的一个字段，浏览器对其有大小和数量限制。 Session解决了Cookie在浏览器与服务器来回传输的问题，客户端只保存Session ID，数据放在服务端。 存的都是键值对。  Session与Cookie的作用保持访问用户与后端服务器的交互状态。（因为HTTP是一种无状态协议）">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-14T12:46:01.559Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Session与Cookie总结">
+<meta name="twitter:description" content="Session与Cookie分别是什么？ Cookie是HTTP头中的一个字段，浏览器对其有大小和数量限制。 Session解决了Cookie在浏览器与服务器来回传输的问题，客户端只保存Session ID，数据放在服务端。 存的都是键值对。  Session与Cookie的作用保持访问用户与后端服务器的交互状态。（因为HTTP是一种无状态协议）">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-SessionCookie" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/14/SessionCookie/" class="article-date">
+  <time datetime="2018-09-14T12:45:00.000Z" itemprop="datePublished">2018-09-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Session与Cookie总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Session与Cookie分别是什么？"><span class="toc-number">1.</span> <span class="toc-text">Session与Cookie分别是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Session与Cookie的作用"><span class="toc-number">2.</span> <span class="toc-text">Session与Cookie的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Session与Cookie的区别和联系是什么？"><span class="toc-number">3.</span> <span class="toc-text">Session与Cookie的区别和联系是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Session与Cookie的实现方式"><span class="toc-number">4.</span> <span class="toc-text">Session与Cookie的实现方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Cookie"><span class="toc-number">4.1.</span> <span class="toc-text">Cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Session"><span class="toc-number">4.2.</span> <span class="toc-text">Session</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分布式Session管理的几种实现方式"><span class="toc-number">5.</span> <span class="toc-text">分布式Session管理的几种实现方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#补充"><span class="toc-number">6.</span> <span class="toc-text">补充</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#解决表单重复提交问题"><span class="toc-number">6.1.</span> <span class="toc-text">解决表单重复提交问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多终端登录（如扫码登录等）的实现"><span class="toc-number">6.2.</span> <span class="toc-text">多终端登录（如扫码登录等）的实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">7.</span> <span class="toc-text">参考文档</span></a></li></ol>
+        </div>
+        
+        <h2 id="Session与Cookie分别是什么？"><a href="#Session与Cookie分别是什么？" class="headerlink" title="Session与Cookie分别是什么？"></a>Session与Cookie分别是什么？</h2><ul>
+<li><strong>Cookie</strong>是HTTP头中的一个字段，浏览器对其有大小和数量限制。</li>
+<li><strong>Session</strong>解决了Cookie在浏览器与服务器来回传输的问题，客户端只保存Session ID，数据放在服务端。</li>
+<li>存的都是<strong>键值对</strong>。</li>
+</ul>
+<h2 id="Session与Cookie的作用"><a href="#Session与Cookie的作用" class="headerlink" title="Session与Cookie的作用"></a>Session与Cookie的作用</h2><p>保持访问用户与后端服务器的交互状态。（因为HTTP是一种无状态协议）</p>
+<a id="more"></a>
+<h2 id="Session与Cookie的区别和联系是什么？"><a href="#Session与Cookie的区别和联系是什么？" class="headerlink" title="Session与Cookie的区别和联系是什么？"></a>Session与Cookie的区别和联系是什么？</h2><ol>
+<li>Cookie数据存放在客户端浏览器上，Session数据放在服务器上。</li>
+<li>Cookie不是很安全，可以修改。</li>
+<li>Cookie有大小和数量限制。</li>
+<li>多台服务器共享Session会存在问题。</li>
+</ol>
+<h2 id="Session与Cookie的实现方式"><a href="#Session与Cookie的实现方式" class="headerlink" title="Session与Cookie的实现方式"></a>Session与Cookie的实现方式</h2><h3 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h3><ol>
+<li>服务端创建Cookie。</li>
+<li>客户端返回Cookie。<br>根据请求的<strong>URL路径</strong>，将符合条件的Cookie放在Request请求头中传回给服务端，服务端通过<code>request.getCookies()</code>获取。（注：一个域名下的Cookie不能被另一个域名访问）</li>
+</ol>
+<h3 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h3><ul>
+<li><p>服务端获取SessionID的三种方式：</p>
+<ol>
+<li>SessionID附带在URL路径参数。</li>
+<li>通过Cookie传递SessionID。</li>
+<li>基于SSL。</li>
+</ol>
+</li>
+<li><p>Session如何工作</p>
+<ol>
+<li>通过<code>request.getSession()</code>获取对应ID的Session，如果该Session不存在或已过期，则创建新的Session。</li>
+<li>Servlet容器重启或开闭时，所有<code>StandardSession</code>对象持久化到一个以<code>“SESSIONS.ser”</code>为文件名的文件中。</li>
+<li>Tomcat中Session对象有效时间为60秒。</li>
+</ol>
+</li>
+</ul>
+<h2 id="分布式Session管理的几种实现方式"><a href="#分布式Session管理的几种实现方式" class="headerlink" title="分布式Session管理的几种实现方式"></a>分布式Session管理的几种实现方式</h2><ol>
+<li>Session复制。</li>
+<li>Session绑定（会话粘滞）。</li>
+<li>利用Cookie记录Session。</li>
+<li>Session服务器。</li>
+</ol>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><h3 id="解决表单重复提交问题"><a href="#解决表单重复提交问题" class="headerlink" title="解决表单重复提交问题"></a>解决表单重复提交问题</h3><ul>
+<li><p><strong>出现原因</strong><br>网速慢，频繁点击提交按钮；手动刷新等。</p>
+</li>
+<li><p><strong>解决方案</strong></p>
+<ol>
+<li>在<strong>请求表单页面</strong>时，由服务器端生成唯一token（令牌），存储到用户Session中，并设置到页面的一个Hidden域中。</li>
+<li><strong>提交表单</strong>时，用Hidden表单域中的token与Session的token做比较。如果相等说明是首次提交，就处理本次请求，然后<strong>将Session中的token移除</strong>；不相等（包括Session不存在token）说明是是重复提交，不做处理。<blockquote>
+<p>注：<strong>请求表单</strong>与<strong>提交表单</strong>是两个动作。</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="多终端登录（如扫码登录等）的实现"><a href="#多终端登录（如扫码登录等）的实现" class="headerlink" title="多终端登录（如扫码登录等）的实现"></a>多终端登录（如扫码登录等）的实现</h3><ol>
+<li>扫描PC网页上的二维码；</li>
+<li>用手机上的登录用户去服务端设置标识位；</li>
+<li>PC端网页不断请求服务端标识位是否已经设置；</li>
+<li>标识位设置后网页跳转到已登录页面。</li>
+</ol>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ul>
+<li>《深入分析Java Web技术内幕》</li>
+<li>《大型网站技术架构》</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2018/09/14/SessionCookie/" data-id="cjm1zzakz001914v7xd4z672d" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/09/04/SpringTransactionPropagation/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Spring的事务传播性与隔离级别</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/博客搭建/">博客搭建</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/09/14/SessionCookie/">Session与Cookie总结</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/SpringTransactionPropagation/">Spring的事务传播性与隔离级别</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/31/SetupBlog/">Hexo+GitHub+Coding搭建博客</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/28/Database_3NF/">数据库三大范式</a>
+          </li>
+        
+          <li>
+            <a href="/2018/02/12/JVM_HelloWorld/">Hello World程序执行过程</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Xibo Li&nbsp;&nbsp; | &nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>&nbsp; | &nbsp;&nbsp;
+            Hosted by <a href="https://coding.net/pages" style="font-weight: bold">CODING Pages</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	<script src="/js/gotop.js"></script>
+	<!--
+	<script src="/js/gotop.js"></script>
+	-->
+
+</div>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
