@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>Spring ApplicationEvent用法 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述Spring的事件机制是观察者设计模式的实现。Spring使用ApplicationEvent作为不同bean之间通信的媒介。 bean可以作为发布者，发布特定的event，而其他的bean可以通过实现ApplicationListener，对特定的event进行订阅，当发布者发布消息时，观察者就可以收到消息。 Spring事件机制的好处是发布者与订阅者解耦，相互间不需要知道对方的实现细节。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring ApplicationEvent用法">
+<meta property="og:url" content="http://nullhint.org/2018/10/05/Spring_ApplicationEvent/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="概述Spring的事件机制是观察者设计模式的实现。Spring使用ApplicationEvent作为不同bean之间通信的媒介。 bean可以作为发布者，发布特定的event，而其他的bean可以通过实现ApplicationListener，对特定的event进行订阅，当发布者发布消息时，观察者就可以收到消息。 Spring事件机制的好处是发布者与订阅者解耦，相互间不需要知道对方的实现细节。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-05T13:09:47.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring ApplicationEvent用法">
+<meta name="twitter:description" content="概述Spring的事件机制是观察者设计模式的实现。Spring使用ApplicationEvent作为不同bean之间通信的媒介。 bean可以作为发布者，发布特定的event，而其他的bean可以通过实现ApplicationListener，对特定的event进行订阅，当发布者发布消息时，观察者就可以收到消息。 Spring事件机制的好处是发布者与订阅者解耦，相互间不需要知道对方的实现细节。">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Spring_ApplicationEvent" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/05/Spring_ApplicationEvent/" class="article-date">
+  <time datetime="2018-10-05T13:20:00.000Z" itemprop="datePublished">2018-10-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Spring ApplicationEvent用法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用示例"><span class="toc-number">2.</span> <span class="toc-text">使用示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol>
+        </div>
+        
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Spring的事件机制是观察者设计模式的实现。Spring使用<code>ApplicationEvent</code>作为不同<code>bean</code>之间通信的媒介。</p>
+<p><code>bean</code>可以作为发布者，发布特定的<code>event</code>，而其他的<code>bean</code>可以通过实现<code>ApplicationListener</code>，对特定的<code>event</code>进行订阅，当发布者发布消息时，观察者就可以收到消息。</p>
+<p>Spring事件机制的好处是发布者与订阅者解耦，相互间不需要知道对方的实现细节。</p>
+<a id="more"></a>
+<h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h2><ul>
+<li><p>定义事件类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoEvent</span> <span class="keyword">extends</span> <span class="title">ApplicationEvent</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String message;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * 构造函数。</span></div><div class="line"><span class="comment">     *</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> source  用来标识事件源（非空）</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> message 要传递的字符串消息</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DemoEvent</span><span class="params">(Object source, String message)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(source);</div><div class="line">        <span class="keyword">this</span>.setMessage(message);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMessage</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> message;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMessage</span><span class="params">(String message)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.message = message;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>定义监听类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoListener</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">DemoEvent</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Async</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onApplicationEvent</span><span class="params">(DemoEvent event)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"从DemoEvent接收到如下消息："</span> + event.getMessage());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>定义发布类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoPublisher</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> ApplicationEventPublisher applicationEventPublisher;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">published</span><span class="params">()</span> </span>&#123;</div><div class="line">        applicationEventPublisher.publishEvent(<span class="keyword">new</span> DemoEvent(<span class="keyword">this</span>, <span class="string">"Hello World"</span>));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>测试类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@ComponentScan</span>(<span class="string">"org.nullhint.applicationevent"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestMain</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        AnnotationConfigApplicationContext context = <span class="keyword">new</span> AnnotationConfigApplicationContext(TestMain.class);</div><div class="line">        DemoPublisher publisher = context.getBean(DemoPublisher.class);</div><div class="line">        publisher.published();</div><div class="line">        context.close();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://www.javarticles.com/2015/05/spring-applicationevent-example.html" target="_blank" rel="external">http://www.javarticles.com/2015/05/spring-applicationevent-example.html</a></li>
+<li><a href="https://blog.csdn.net/sinat_33625560/article/details/78605367" target="_blank" rel="external">https://blog.csdn.net/sinat_33625560/article/details/78605367</a></li>
+<li><a href="https://www.baeldung.com/spring-events" target="_blank" rel="external">https://www.baeldung.com/spring-events</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2018/10/05/Spring_ApplicationEvent/" data-id="cjmw11m670017y8v7tuq9lneq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/09/14/SessionCookie/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Session与Cookie总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/博客搭建/">博客搭建</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/05/Spring_ApplicationEvent/">Spring ApplicationEvent用法</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/14/SessionCookie/">Session与Cookie总结</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/SpringTransactionPropagation/">Spring的事务传播性与隔离级别</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/31/SetupBlog/">Hexo+GitHub+Coding搭建博客</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/28/Database_3NF/">数据库三大范式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Xibo Li&nbsp;&nbsp; | &nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>&nbsp; | &nbsp;&nbsp;
+            Hosted by <a href="https://coding.net/pages" style="font-weight: bold">CODING Pages</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	<script src="/js/gotop.js"></script>
+	<!--
+	<script src="/js/gotop.js"></script>
+	-->
+
+</div>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
