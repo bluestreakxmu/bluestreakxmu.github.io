@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://nullhint.org/2018/10/17/JVM_GarbageCollectors/</loc>
+    
+    <lastmod>2018-10-17T14:38:32.145Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://nullhint.org/2018/10/05/Spring_ApplicationEvent/</loc>
     
     <lastmod>2018-10-05T13:09:47.727Z</lastmod>

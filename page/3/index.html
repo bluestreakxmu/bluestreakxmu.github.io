@@ -66,6 +66,52 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Java_HashMap" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/27/Java_HashMap/" class="article-date">
+  <time datetime="2017-09-27T15:55:29.000Z" itemprop="datePublished">2017-09-27</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JDK源码/">JDK源码</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/27/Java_HashMap/">Java HashMap实现原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="HashMap概述"><a href="#HashMap概述" class="headerlink" title="HashMap概述"></a>HashMap概述</h2><p><code>HashMap</code>是基于哈希表的Map接口的<strong>非同步</strong>实现。此实现提供所有可选的映射操作，并<strong>允许使用null值和null键</strong>。此类不保证映射的顺序，特别是它不保证该顺序恒久不变。（Note：此为官方文档描述）<br><strong>关键点：</strong>基于Map接口实现；允许null键/值；非同步；不保证有序(比如插入的顺序)、也不保证序不随时间变化。</p>
+<h2 id="HashMap使用"><a href="#HashMap使用" class="headerlink" title="HashMap使用"></a>HashMap使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</div><div class="line">map.put(<span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">map.put(<span class="string">"key"</span>, <span class="string">"value"</span>);</div><div class="line">map.get(<span class="keyword">null</span>);</div><div class="line">map.get(<span class="string">"key"</span>);</div></pre></td></tr></table></figure>
+        
+          <p class="article-more-link">
+            <a href="/2017/09/27/Java_HashMap/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cjnd9hxbw000sy4v7csenawrd" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Java_proxy" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/09/20/Java_proxy/" class="article-date">
@@ -105,7 +151,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cjmw11m5w0010y8v7pcnr4ms1" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cjnd9hxby000vy4v7t1muxbk5" class="article-share-link">Share</a>
       
       
     </footer>
@@ -158,6 +204,10 @@
       <ul>
         
           <li>
+            <a href="/2018/10/17/JVM_GarbageCollectors/">HotSpot虚拟机垃圾收集器</a>
+          </li>
+        
+          <li>
             <a href="/2018/10/05/Spring_ApplicationEvent/">Spring ApplicationEvent用法</a>
           </li>
         
@@ -171,10 +221,6 @@
         
           <li>
             <a href="/2018/08/31/SetupBlog/">Hexo+GitHub+Coding搭建博客</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/28/Database_3NF/">数据库三大范式</a>
           </li>
         
       </ul>
