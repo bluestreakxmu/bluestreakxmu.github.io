@@ -1,1 +1,1 @@
-http://nullhint.org/2018/10/17/JVM_GarbageCollectors/
+http://nullhint.org/2018/11/13/EhcacheDemo/

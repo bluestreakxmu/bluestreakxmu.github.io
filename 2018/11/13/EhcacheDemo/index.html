@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>Spring+Ehcache实现对象缓存以及页面整体和局部缓存 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述Ehcache是一种广泛使用的开源Java分布式缓存。主要面向通用缓存、Java EE和轻量级容器。它具有内存和磁盘存储，缓存加载器，缓存扩展，缓存异常处理程序，一个gzip缓存servlet过滤器，支持REST和SOAP api等特点。本文主要介绍Ehcache的两种缓存实现方式：数据对象缓存以及页面缓存。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring+Ehcache实现对象缓存以及页面整体和局部缓存">
+<meta property="og:url" content="http://nullhint.org/2018/11/13/EhcacheDemo/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="概述Ehcache是一种广泛使用的开源Java分布式缓存。主要面向通用缓存、Java EE和轻量级容器。它具有内存和磁盘存储，缓存加载器，缓存扩展，缓存异常处理程序，一个gzip缓存servlet过滤器，支持REST和SOAP api等特点。本文主要介绍Ehcache的两种缓存实现方式：数据对象缓存以及页面缓存。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-13T02:49:39.576Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring+Ehcache实现对象缓存以及页面整体和局部缓存">
+<meta name="twitter:description" content="概述Ehcache是一种广泛使用的开源Java分布式缓存。主要面向通用缓存、Java EE和轻量级容器。它具有内存和磁盘存储，缓存加载器，缓存扩展，缓存异常处理程序，一个gzip缓存servlet过滤器，支持REST和SOAP api等特点。本文主要介绍Ehcache的两种缓存实现方式：数据对象缓存以及页面缓存。">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-EhcacheDemo" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/13/EhcacheDemo/" class="article-date">
+  <time datetime="2018-11-13T03:00:00.000Z" itemprop="datePublished">2018-11-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Ehcache/">Ehcache</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Spring+Ehcache实现对象缓存以及页面整体和局部缓存
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ehcache对象缓存"><span class="toc-number">2.</span> <span class="toc-text">Ehcache对象缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ehcache页面缓存"><span class="toc-number">3.</span> <span class="toc-text">Ehcache页面缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#页面整体缓存"><span class="toc-number">3.1.</span> <span class="toc-text">页面整体缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#页面局部缓存"><span class="toc-number">3.2.</span> <span class="toc-text">页面局部缓存</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">4.</span> <span class="toc-text">参考链接</span></a></li></ol>
+        </div>
+        
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Ehcache是一种广泛使用的开源Java分布式缓存。主要面向通用缓存、Java EE和轻量级容器。它具有内存和磁盘存储，缓存加载器，缓存扩展，缓存异常处理程序，一个gzip缓存servlet过滤器，支持REST和SOAP api等特点。<br>本文主要介绍Ehcache的两种缓存实现方式：数据对象缓存以及页面缓存。</p>
+<a id="more"></a>
+<h2 id="Ehcache对象缓存"><a href="#Ehcache对象缓存" class="headerlink" title="Ehcache对象缓存"></a>Ehcache对象缓存</h2><p><strong>相关文件结构如下所示：</strong></p>
+<blockquote>
+<p>my-app\pom.xml<br>my-app\src\main\resources\ehcache.xml<br>my-app\src\main\java\org\nullhint\service\EhCacheDemoService.java<br>my-app\src\main\java\org\nullhint\service\impl\EhCacheDemoServiceImpl.java<br>my-app\src\test\resources\spring-ehcache-test.xml<br>my-app\src\test\java\org\nullhint\service\EhCacheDemoServiceTest.java</p>
+</blockquote>
+<ol>
+<li><p>引入Ehcache相关依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>net.sf.ehcache<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ehcache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.10.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>缓存配置文件<code>ehcache.xml</code>(放于maven标准目录<code>resources</code>下)：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">ehcache</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 指定一个文件目录，当EhCache把数据写到硬盘上时，将把数据写到这个文件目录下 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">"java.io.tmpdir"</span>/&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- 设定缓存的默认数据过期策略 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">defaultCache</span></span></div><div class="line"><span class="tag">            <span class="attr">maxElementsInMemory</span>=<span class="string">"10000"</span></span></div><div class="line"><span class="tag">            <span class="attr">eternal</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">            <span class="attr">overflowToDisk</span>=<span class="string">"true"</span></span></div><div class="line"><span class="tag">            <span class="attr">timeToIdleSeconds</span>=<span class="string">"10"</span></span></div><div class="line"><span class="tag">            <span class="attr">timeToLiveSeconds</span>=<span class="string">"20"</span></span></div><div class="line"><span class="tag">            <span class="attr">diskPersistent</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">            <span class="attr">diskExpiryThreadIntervalSeconds</span>=<span class="string">"120"</span>/&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- 缓存方法返回值 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">"cacheDemo"</span></span></div><div class="line"><span class="tag">           <span class="attr">maxElementsInMemory</span>=<span class="string">"1000"</span></span></div><div class="line"><span class="tag">           <span class="attr">eternal</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">           <span class="attr">overflowToDisk</span>=<span class="string">"true"</span></span></div><div class="line"><span class="tag">           <span class="attr">timeToIdleSeconds</span>=<span class="string">"10"</span></span></div><div class="line"><span class="tag">           <span class="attr">timeToLiveSeconds</span>=<span class="string">"20"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>缓存类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">EhCacheDemoService</span> </span>&#123;</div><div class="line">    <span class="function">String <span class="title">getTimestamp</span><span class="params">(String param)</span></span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Service</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EhCacheDemoServiceImpl</span> <span class="keyword">implements</span> <span class="title">EhCacheDemoService</span> </span>&#123;</div><div class="line">    <span class="meta">@Cacheable</span>(value = <span class="string">"cacheDemo"</span>, key = <span class="string">"#param"</span>)</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getTimestamp</span><span class="params">(String param)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> ((Long) System.currentTimeMillis()).toString();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>Spring测试配置文件<code>spring-ehcache-test.xml</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></div><div class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></div><div class="line"><span class="tag">       <span class="attr">xmlns:cache</span>=<span class="string">"http://www.springframework.org/schema/cache"</span></span></div><div class="line"><span class="tag">       <span class="attr">xmlns:mvc</span>=<span class="string">"http://www.springframework.org/schema/mvc"</span></span></div><div class="line"><span class="tag">       <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></div><div class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd</span></span></div><div class="line"><span class="tag"><span class="string">                     http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!--激活注解模式--&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">mvc:annotation-driven</span>/&gt;</span></div><div class="line">    <span class="comment">&lt;!--自动扫描--&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"org.nullhint"</span>/&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">cache:annotation-driven</span> <span class="attr">cache-manager</span>=<span class="string">"cacheManager"</span>/&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"cacheManager"</span></span></div><div class="line"><span class="tag">          <span class="attr">class</span>=<span class="string">"org.springframework.cache.ehcache.EhCacheCacheManager"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"cacheManager"</span> <span class="attr">ref</span>=<span class="string">"ehcache"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"ehcache"</span></span></div><div class="line"><span class="tag">          <span class="attr">class</span>=<span class="string">"org.springframework.cache.ehcache.EhCacheManagerFactoryBean"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"configLocation"</span> <span class="attr">value</span>=<span class="string">"classpath:ehcache.xml"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>单元测试类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 指定bean注入的配置文件</span></div><div class="line"><span class="meta">@ContextConfiguration</span>(locations = &#123;<span class="string">"classpath:spring-ehcache-test.xml"</span>&#125;)</div><div class="line"><span class="comment">// 使用标准的JUnit @RunWith注释来告诉JUnit使用Spring TestRunner</span></div><div class="line"><span class="meta">@RunWith</span>(SpringJUnit4ClassRunner.class)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EhCacheDemoServiceTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> EhCacheDemoService ehCacheDemoService;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getTimestamp</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        String value1 = ehCacheDemoService.getTimestamp(<span class="string">"param"</span>);</div><div class="line">        System.out.println(<span class="string">"第一次调用：      "</span> + value1);</div><div class="line">        Thread.sleep(<span class="number">2000</span>);</div><div class="line">        String value2 = ehCacheDemoService.getTimestamp(<span class="string">"param"</span>);</div><div class="line">        System.out.println(<span class="string">"2秒之后调用：     "</span> + value2);</div><div class="line">        Thread.sleep(<span class="number">11000</span>);</div><div class="line">        String value11 = ehCacheDemoService.getTimestamp(<span class="string">"param"</span>);</div><div class="line">        System.out.println(<span class="string">"再过11秒之后调用： "</span> + value11);</div><div class="line"></div><div class="line">        Assert.assertEquals(value1, value2);</div><div class="line">        Assert.assertNotEquals(value2, value11);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>测试结果：</strong></p>
+<blockquote>
+<p>第一次调用：      1542071891589<br>2秒之后调用：     1542071891589<br>再过11秒之后调用： 1542071904604</p>
+</blockquote>
+<h2 id="Ehcache页面缓存"><a href="#Ehcache页面缓存" class="headerlink" title="Ehcache页面缓存"></a>Ehcache页面缓存</h2><p>网站首页的访问量巨大，Ehcache可以用来缓存网站首页等。</p>
+<h3 id="页面整体缓存"><a href="#页面整体缓存" class="headerlink" title="页面整体缓存"></a>页面整体缓存</h3><p>相关文件目录结构如下：</p>
+<blockquote>
+<p>my-app\src\main\resources\ehcache.xml<br>my-app\src\main\webapp\WEB-INF\web.xml<br>my-app\src\main\java\org\nullhint\controller\PageCacheController.java<br>my-app\src\main\webapp\WEB-INF\jsp\pageCacheController\pageCache.jsp</p>
+</blockquote>
+<ol>
+<li><p>配置<code>ehcache.xml</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">ehcache</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 指定一个文件目录，当EhCache把数据写到硬盘上时，将把数据写到这个文件目录下 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">"java.io.tmpdir"</span>/&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- 设定缓存的默认数据过期策略 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">defaultCache</span></span></div><div class="line"><span class="tag">            <span class="attr">maxElementsInMemory</span>=<span class="string">"10000"</span></span></div><div class="line"><span class="tag">            <span class="attr">eternal</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">            <span class="attr">overflowToDisk</span>=<span class="string">"true"</span></span></div><div class="line"><span class="tag">            <span class="attr">timeToIdleSeconds</span>=<span class="string">"10"</span></span></div><div class="line"><span class="tag">            <span class="attr">timeToLiveSeconds</span>=<span class="string">"20"</span></span></div><div class="line"><span class="tag">            <span class="attr">diskPersistent</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">            <span class="attr">diskExpiryThreadIntervalSeconds</span>=<span class="string">"120"</span>/&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- 页面全部缓存 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">"SimplePageCachingFilter"</span></span></div><div class="line"><span class="tag">           <span class="attr">maxElementsInMemory</span>=<span class="string">"10"</span></span></div><div class="line"><span class="tag">           <span class="attr">maxElementsOnDisk</span>=<span class="string">"10"</span></span></div><div class="line"><span class="tag">           <span class="attr">eternal</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">           <span class="attr">overflowToDisk</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">           <span class="attr">timeToIdleSeconds</span>=<span class="string">"120"</span></span></div><div class="line"><span class="tag">           <span class="attr">timeToLiveSeconds</span>=<span class="string">"60"</span></span></div><div class="line"><span class="tag">           <span class="attr">memoryStoreEvictionPolicy</span>=<span class="string">"LFU"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">cache</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>web.xml</code>配置页面缓存过滤器，过滤URL：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- EhCache整个页面缓存过滤器 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>PageCachingFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>org.nullhint.filter.CustomPageCachingFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>cacheName<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>SimplePageCachingFilter<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>PageCachingFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/pageCacheController/testPageCache<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>Controller类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/pageCacheController"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PageCacheController</span> </span>&#123;</div><div class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"testPageCache"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> ModelAndView <span class="title">pageCache</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ModelAndView(<span class="string">"/pageCacheController/pageCache"</span>, <span class="string">"date"</span>, (<span class="keyword">new</span> Date()).toLocaleString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>pageCache.jsp</code>页面：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%@</span> <span class="attr">page</span> <span class="attr">contentType</span>=<span class="string">"text/html;charset=UTF-8"</span> %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Title<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>整个页面缓存时间<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">font</span> <span class="attr">style</span>=<span class="string">"color:green;font-weight:bold;font-size: 18px"</span>&gt;</span>$&#123;date&#125;<span class="tag">&lt;/<span class="name">font</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="页面局部缓存"><a href="#页面局部缓存" class="headerlink" title="页面局部缓存"></a>页面局部缓存</h3><p>页面局部缓存可以缓存<code>&lt;jsp:include&gt;</code>包含的页面。相关文件目录结构如下：</p>
+<blockquote>
+<p>my-app\src\main\resources\ehcache.xml<br>my-app\src\main\webapp\WEB-INF\web.xml<br>my-app\src\main\java\org\nullhint\controller\PageCacheController.java<br>my-app\src\main\webapp\WEB-INF\jsp\pageCacheController\pageFragmentAll.jsp<br>my-app\src\main\webapp\WEB-INF\jsp\pageCacheController\pageFragmentCache.jsp</p>
+</blockquote>
+<ol>
+<li><p>配置ehcache.xml：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">ehcache</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 指定一个文件目录，当EhCache把数据写到硬盘上时，将把数据写到这个文件目录下 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">"java.io.tmpdir"</span>/&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- 设定缓存的默认数据过期策略 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">defaultCache</span></span></div><div class="line"><span class="tag">            <span class="attr">maxElementsInMemory</span>=<span class="string">"10000"</span></span></div><div class="line"><span class="tag">            <span class="attr">eternal</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">            <span class="attr">overflowToDisk</span>=<span class="string">"true"</span></span></div><div class="line"><span class="tag">            <span class="attr">timeToIdleSeconds</span>=<span class="string">"10"</span></span></div><div class="line"><span class="tag">            <span class="attr">timeToLiveSeconds</span>=<span class="string">"20"</span></span></div><div class="line"><span class="tag">            <span class="attr">diskPersistent</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">            <span class="attr">diskExpiryThreadIntervalSeconds</span>=<span class="string">"120"</span>/&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- 页面局部缓存 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">"SimplePageFragmentCachingFilter"</span></span></div><div class="line"><span class="tag">           <span class="attr">maxElementsInMemory</span>=<span class="string">"10"</span></span></div><div class="line"><span class="tag">           <span class="attr">maxElementsOnDisk</span>=<span class="string">"10"</span></span></div><div class="line"><span class="tag">           <span class="attr">eternal</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">           <span class="attr">overflowToDisk</span>=<span class="string">"false"</span></span></div><div class="line"><span class="tag">           <span class="attr">timeToIdleSeconds</span>=<span class="string">"120"</span></span></div><div class="line"><span class="tag">           <span class="attr">timeToLiveSeconds</span>=<span class="string">"60"</span></span></div><div class="line"><span class="tag">           <span class="attr">memoryStoreEvictionPolicy</span>=<span class="string">"LFU"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">cache</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>web.xml</code>配置页面缓存过滤器，过滤URL：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- EhCache页面局部缓存过滤器--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>PageFragmentCachingFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>net.sf.ehcache.constructs.web.filter.SimplePageFragmentCachingFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>cacheName<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>SimplePageFragmentCachingFilter<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>PageFragmentCachingFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/WEB-INF/jsp/pageCacheController/pageFragmentCache.jsp<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!--注意此处需要配置成INCLUDE--&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">dispatcher</span>&gt;</span>INCLUDE<span class="tag">&lt;/<span class="name">dispatcher</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>Controller类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/pageCacheController"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PageCacheController</span> </span>&#123;</div><div class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"testPageFragmentCache"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> ModelAndView <span class="title">pageFragmentCache</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ModelAndView(<span class="string">"/pageCacheController/pageFragmentAll"</span>, <span class="string">"date"</span>, (<span class="keyword">new</span> Date()).toLocaleString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>jsp页面：</p>
+</li>
+</ol>
+<ul>
+<li><p><code>pageFragmentAll.jsp</code>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%@</span> <span class="attr">page</span> <span class="attr">contentType</span>=<span class="string">"text/html;charset=UTF-8"</span> %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Title<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>当前时间<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">font</span> <span class="attr">style</span>=<span class="string">"color:green;font-weight:bold;font-size: 18px"</span>&gt;</span>$&#123;date&#125;<span class="tag">&lt;/<span class="name">font</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">jsp:include</span> <span class="attr">page</span>=<span class="string">"/WEB-INF/jsp/pageCacheController/pageFragmentCache.jsp"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p><code>pageFragmentCache.jsp</code>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%@</span> <span class="attr">page</span> <span class="attr">contentType</span>=<span class="string">"text/html;charset=UTF-8"</span> %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Title<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>页面局部缓存时间<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">font</span> <span class="attr">style</span>=<span class="string">"color:green;font-weight:bold;font-size: 18px"</span>&gt;</span>$&#123;date&#125;<span class="tag">&lt;/<span class="name">font</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://baike.baidu.com/item/ehcache/6036099" target="_blank" rel="external">https://baike.baidu.com/item/ehcache/6036099</a></li>
+<li><a href="https://www.cnblogs.com/jianjianyang/p/4953157.html" target="_blank" rel="external">https://www.cnblogs.com/jianjianyang/p/4953157.html</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2018/11/13/EhcacheDemo/" data-id="cjof52w8z0003dgv74mio3ik6" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/10/17/JVM_GarbageCollectors/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">HotSpot虚拟机垃圾收集器</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ehcache/">Ehcache</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/博客搭建/">博客搭建</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/13/EhcacheDemo/">Spring+Ehcache实现对象缓存以及页面整体和局部缓存</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/17/JVM_GarbageCollectors/">HotSpot虚拟机垃圾收集器</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/05/Spring_ApplicationEvent/">Spring ApplicationEvent用法</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/14/SessionCookie/">Session与Cookie总结</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/SpringTransactionPropagation/">Spring的事务传播性与隔离级别</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Xibo Li&nbsp;&nbsp; | &nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>&nbsp; | &nbsp;&nbsp;
+            Hosted by <a href="https://coding.net/pages" style="font-weight: bold">CODING Pages</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	<script src="/js/gotop.js"></script>
+	<!--
+	<script src="/js/gotop.js"></script>
+	-->
+
+</div>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

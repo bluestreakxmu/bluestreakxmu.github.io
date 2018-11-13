@@ -4,6 +4,24 @@
 
     
   <url>
+    <loc>http://nullhint.org/2018/11/13/EhcacheDemo/</loc>
+    <lastmod>2018-11-13T02:49:39.576Z</lastmod>
+    <data>
+        <display>
+        <title>Spring+Ehcache实现对象缓存以及页面整体和局部缓存</title>
+        <pubTime>2018-11-13T03:00:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="Ehcache" url="http://nullhint.org/categories/Ehcache/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://nullhint.org/2017/10/29/Java_BuilderPattern/</loc>
     <lastmod>2018-11-03T11:30:35.644Z</lastmod>
     <data>

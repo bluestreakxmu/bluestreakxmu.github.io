@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://nullhint.org/2018/11/13/EhcacheDemo/</loc>
+    
+    <lastmod>2018-11-13T02:49:39.576Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://nullhint.org/2017/10/29/Java_BuilderPattern/</loc>
     
     <lastmod>2018-11-03T11:30:35.644Z</lastmod>
