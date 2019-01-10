@@ -7,15 +7,19 @@
   
 
   
-  <title>Archives: 2018/1 | Alan&#39;s Blog</title>
+  <title>解决Windows10自带的“照片”应用闪退的问题 | Alan&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Alan&#39;s Blog">
-<meta property="og:url" content="http://nullhint.org/archives/2018/01/index.html">
+  <meta name="description" content="场景刚买的装着Windows10系统的Surface电脑，自带的“照片”应用打开后黑屏+闪退。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="解决Windows10自带的“照片”应用闪退的问题">
+<meta property="og:url" content="http://nullhint.org/2019/01/10/Windows10Photos/index.html">
 <meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="场景刚买的装着Windows10系统的Surface电脑，自带的“照片”应用打开后黑屏+闪退。">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-01-10T07:39:34.634Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Alan&#39;s Blog">
+<meta name="twitter:title" content="解决Windows10自带的“照片”应用闪退的问题">
+<meta name="twitter:description" content="场景刚买的装着Windows10系统的Surface电脑，自带的“照片”应用打开后黑屏+闪退。">
   
     <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
   
@@ -64,40 +68,85 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2018/01/11/Java_ConcurrentHashMap/" class="archive-article-date">
-  <time datetime="2018-01-11T12:00:00.000Z" itemprop="datePublished">Jan 11</time>
+        <section id="main"><article id="post-Windows10Photos" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/01/10/Windows10Photos/" class="article-date">
+  <time datetime="2019-01-10T08:00:00.000Z" itemprop="datePublished">2019-01-10</time>
 </a>
-      
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Windows10/">Windows10</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/01/11/Java_ConcurrentHashMap/">JUC.ConcurrentHashMap实现原理</a>
+    <h1 class="article-title" itemprop="name">
+      解决Windows10自带的“照片”应用闪退的问题
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#场景"><span class="toc-number">1.</span> <span class="toc-text">场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#尝试过的方法"><span class="toc-number">2.</span> <span class="toc-text">尝试过的方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最终有效的方法"><span class="toc-number">3.</span> <span class="toc-text">最终有效的方法</span></a></li></ol>
+        </div>
+        
+        <h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>刚买的装着Windows10系统的Surface电脑，自带的“照片”应用打开后黑屏+闪退。</p>
+<a id="more"></a>
+<h2 id="尝试过的方法"><a href="#尝试过的方法" class="headerlink" title="尝试过的方法"></a>尝试过的方法</h2><ol>
+<li><p>重置应用。方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Open Start &gt; Settings &gt; Apps &gt; Apps &amp; features </div><div class="line">Scroll down to Photos </div><div class="line">Select it </div><div class="line">Click Advanced options </div><div class="line">Click Reset </div><div class="line"></div><div class="line">Restart</div></pre></td></tr></table></figure>
+</li>
+<li><p>卸载然后通过Microsoft Store重新安装。卸载方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">进入【开始菜单】，找到【Windows Power Shell】的文件夹，右键单击Windows PowerShell（注意不是Windows PowerShell ISE），然后单击以【管理员身份运行】，输入：</div><div class="line">Get-AppxPackage *photo* | Remove-AppxPackage</div></pre></td></tr></table></figure>
+</li>
+<li><p>更新Windows10系统到最新的版本。</p>
+</li>
+</ol>
+<h2 id="最终有效的方法"><a href="#最终有效的方法" class="headerlink" title="最终有效的方法"></a>最终有效的方法</h2><p>前面尝试的方法中虽然卸载了应用，但是通过Microsoft Store重装时，因为安装包已经预先下载好了（很可能是原先的安装包有问题），所以重新安装后还是会出问题，故要把安装包清除掉，再通过Microsoft Store重新下载和安装。具体步骤如下：</p>
+<ol>
+<li>跟面前卸载步骤一样，通过<strong>Windows Power Shell</strong>执行<code>Get-AppxPackage *photo* | Remove-AppxPackage</code>卸载应用。</li>
+<li><p>清除Store缓存的安装包。方法如下：<br>清除<code>C:\Users\alanl\AppData\Local\Packages</code>目录下所有跟<code>Photos</code>有关的文件夹。</p>
+<blockquote>
+<p>注：因为是系统文件夹，所以需要有相应的权限才能删除。</p>
+</blockquote>
+</li>
+<li><p>通过Microsoft Store重装应用。</p>
+</li>
+</ol>
 
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2019/01/10/Windows10Photos/" data-id="cjqqazpw10012twv7ruj7fuot" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/11/13/EhcacheDemo/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Spring+Ehcache实现对象缓存以及页面整体和局部缓存</div>
+    </a>
+  
+</nav>
+
+  
+</article>
 
 </section>
         
