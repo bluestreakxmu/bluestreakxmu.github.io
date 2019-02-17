@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
-  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
-  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  <meta name="baidu-site-verification" content="YBQkHLzS0a">
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc">
   
 
   
@@ -27,7 +27,7 @@
   
   <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
 <body>
   <div id="container">
     <div id="wrap">
@@ -66,7 +66,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-Java_FactoryPattern" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Java_FactoryPattern" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/10/22/Java_FactoryPattern/" class="article-date">
   <time datetime="2017-10-22T05:15:00.000Z" itemprop="datePublished">2017-10-22</time>
@@ -108,7 +108,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cjqqazpvl000ktwv73gsaztxw" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/22/Java_FactoryPattern/" data-id="cjs89w5dp000eg0xcugx9ofe3" class="article-share-link">Share</a>
       
       
     </footer>
@@ -118,7 +118,7 @@
 
 
   
-    <article id="post-Java_Singleton" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Java_Singleton" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/10/12/Java_Singleton/" class="article-date">
   <time datetime="2017-10-12T13:00:00.000Z" itemprop="datePublished">2017-10-12</time>
@@ -147,7 +147,7 @@
         <blockquote>
 <p><strong>立即加载/“饿汉模式”：</strong>使用类的时候已经创建对象实例。<br><strong>延迟加载/“懒汉模式”：</strong>对象实例的创建延迟到方法调用时。</p>
 </blockquote>
-<h2 id="使用DCL（Double-Check-Locking）双检查锁机制实现单例模式"><a href="#使用DCL（Double-Check-Locking）双检查锁机制实现单例模式" class="headerlink" title="使用DCL（Double-Check Locking）双检查锁机制实现单例模式"></a>使用DCL（Double-Check Locking）双检查锁机制实现单例模式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * 定义私有构造器防止被外部实例化。</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// Note：注意需要使用volatile。</span></div><div class="line">    <span class="comment">// 另外，JDK1.5之前无法安全地使用DCL的原因是volatile屏蔽指令重排序的语义在JDK1.5中才被完全修复。</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == singleton) &#123;</div><div class="line">            <span class="keyword">synchronized</span> (Singleton.class) &#123;</div><div class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == singleton) &#123;</div><div class="line">                    singleton = <span class="keyword">new</span> Singleton();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用DCL（Double-Check-Locking）双检查锁机制实现单例模式"><a href="#使用DCL（Double-Check-Locking）双检查锁机制实现单例模式" class="headerlink" title="使用DCL（Double-Check Locking）双检查锁机制实现单例模式"></a>使用DCL（Double-Check Locking）双检查锁机制实现单例模式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 定义私有构造器防止被外部实例化。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Note：注意需要使用volatile。</span></span><br><span class="line">    <span class="comment">// 另外，JDK1.5之前无法安全地使用DCL的原因是volatile屏蔽指令重排序的语义在JDK1.5中才被完全修复。</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == singleton) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == singleton) &#123;</span><br><span class="line">                    singleton = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> singleton;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         
           <p class="article-more-link">
             <a href="/2017/10/12/Java_Singleton/#more">Read More</a>
@@ -156,7 +156,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cjqqazpw1000ttwv7nkraj1cl" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/10/12/Java_Singleton/" data-id="cjs89w5ds000ig0xcbb1iv1r0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -166,7 +166,7 @@
 
 
   
-    <article id="post-Java_HashMap" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Java_HashMap" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/09/27/Java_HashMap/" class="article-date">
   <time datetime="2017-09-27T15:55:29.000Z" itemprop="datePublished">2017-09-27</time>
@@ -193,7 +193,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h2 id="HashMap概述"><a href="#HashMap概述" class="headerlink" title="HashMap概述"></a>HashMap概述</h2><p><code>HashMap</code>是基于哈希表的Map接口的<strong>非同步</strong>实现。此实现提供所有可选的映射操作，并<strong>允许使用null值和null键</strong>。此类不保证映射的顺序，特别是它不保证该顺序恒久不变。（Note：此为官方文档描述）<br><strong>关键点：</strong>基于Map接口实现；允许null键/值；非同步；不保证有序(比如插入的顺序)、也不保证序不随时间变化。</p>
-<h2 id="HashMap使用"><a href="#HashMap使用" class="headerlink" title="HashMap使用"></a>HashMap使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</div><div class="line">map.put(<span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">map.put(<span class="string">"key"</span>, <span class="string">"value"</span>);</div><div class="line">map.get(<span class="keyword">null</span>);</div><div class="line">map.get(<span class="string">"key"</span>);</div></pre></td></tr></table></figure>
+<h2 id="HashMap使用"><a href="#HashMap使用" class="headerlink" title="HashMap使用"></a>HashMap使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">map.put(<span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">map.put(<span class="string">"key"</span>, <span class="string">"value"</span>);</span><br><span class="line">map.get(<span class="keyword">null</span>);</span><br><span class="line">map.get(<span class="string">"key"</span>);</span><br></pre></td></tr></table></figure>
         
           <p class="article-more-link">
             <a href="/2017/09/27/Java_HashMap/#more">Read More</a>
@@ -202,7 +202,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cjqqazpvl000ltwv75ve00mli" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/27/Java_HashMap/" data-id="cjs89w5dr000hg0xcg2lzfrcq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -212,7 +212,7 @@
 
 
   
-    <article id="post-Java_proxy" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Java_proxy" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/09/20/Java_proxy/" class="article-date">
   <time datetime="2017-09-20T03:35:29.000Z" itemprop="datePublished">2017-09-20</time>
@@ -251,7 +251,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cjqqazpw1000vtwv7nw1d9njr" class="article-share-link">Share</a>
+      <a data-url="http://nullhint.org/2017/09/20/Java_proxy/" data-id="cjs89w5du000mg0xcvn31lt5u" class="article-share-link">Share</a>
       
       
     </footer>
@@ -341,8 +341,7 @@
         </div>
     </div>
     <span style="display: none">
-  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
-                id="busuanzi_value_page_pv"></span> 次
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span id="busuanzi_value_page_pv"></span> 次
     </span>
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
     </script>
