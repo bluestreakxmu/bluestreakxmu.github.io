@@ -2,184 +2,191 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://nullhint.org/2019/01/10/Windows10Photos/</loc>
+    <loc>http://nullhint.org/2019/04/16/Oracle_BitmapIndex/</loc>
     
-    <lastmod>2019-02-17T01:47:00.672Z</lastmod>
+    <lastmod>2019-04-16T04:36:07.608Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://nullhint.org/2017/12/29/Java_ThreadPool/</loc>
     
-    <lastmod>2019-02-17T01:39:23.273Z</lastmod>
+    <lastmod>2019-04-16T04:31:58.305Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://nullhint.org/about/index.html</loc>
+    <loc>http://nullhint.org/2019/01/10/Windows10Photos/</loc>
     
-    <lastmod>2018-12-31T04:00:08.128Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2018/10/05/Spring_ApplicationEvent/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.128Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/11/15/ReentrantLock/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.127Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2018/09/04/SpringTransactionPropagation/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.127Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2018/09/14/SessionCookie/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.127Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2018/08/31/SetupBlog/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.127Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/09/20/Java_proxy/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.127Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/09/27/Java_HashMap/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.126Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.126Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/10/12/Java_Singleton/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.126Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/10/28/Java_ThreadLocal/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.126Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/10/22/Java_FactoryPattern/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.125Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/10/28/Java_DesignPattern/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.125Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/12/10/Java_CommandPattern/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.125Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2017/10/29/Java_BuilderPattern/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.125Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2018/01/11/Java_ConcurrentHashMap/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.125Z</lastmod>
+    <lastmod>2019-01-10T07:39:34.634Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://nullhint.org/2018/11/13/EhcacheDemo/</loc>
     
-    <lastmod>2018-12-31T04:00:08.124Z</lastmod>
+    <lastmod>2018-11-13T02:49:39.576Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://nullhint.org/2017/11/06/JUC_CountDownLatch/</loc>
+    <loc>http://nullhint.org/2017/10/29/Java_BuilderPattern/</loc>
     
-    <lastmod>2018-12-31T04:00:08.124Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://nullhint.org/2018/08/28/Database_3NF/</loc>
-    
-    <lastmod>2018-12-31T04:00:08.124Z</lastmod>
+    <lastmod>2018-11-03T11:30:35.644Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://nullhint.org/2017/11/17/JUC_Semaphore/</loc>
+    <loc>http://nullhint.org/2017/10/29/Java_TemplateMethodPattern/</loc>
     
-    <lastmod>2018-12-31T04:00:08.124Z</lastmod>
+    <lastmod>2018-11-03T11:29:35.706Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/10/22/Java_FactoryPattern/</loc>
+    
+    <lastmod>2018-11-03T11:27:59.989Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/12/10/Java_CommandPattern/</loc>
+    
+    <lastmod>2018-11-03T11:24:30.553Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2018/01/11/Java_ConcurrentHashMap/</loc>
+    
+    <lastmod>2018-11-03T11:22:33.201Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2018/08/31/SetupBlog/</loc>
+    
+    <lastmod>2018-11-03T11:19:32.368Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/09/27/Java_HashMap/</loc>
+    
+    <lastmod>2018-11-03T11:11:25.922Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://nullhint.org/2018/10/17/JVM_GarbageCollectors/</loc>
     
-    <lastmod>2018-12-31T04:00:08.124Z</lastmod>
+    <lastmod>2018-10-17T14:38:32.145Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://nullhint.org/2017/12/20/JUC_CyclicBarrier/</loc>
+    <loc>http://nullhint.org/2018/10/05/Spring_ApplicationEvent/</loc>
     
-    <lastmod>2018-12-31T04:00:08.124Z</lastmod>
+    <lastmod>2018-10-05T13:09:47.727Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2018/09/14/SessionCookie/</loc>
+    
+    <lastmod>2018-09-14T12:46:01.559Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2018/09/04/SpringTransactionPropagation/</loc>
+    
+    <lastmod>2018-09-04T00:58:50.066Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2018/08/28/Database_3NF/</loc>
+    
+    <lastmod>2018-08-28T04:40:18.586Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://nullhint.org/2018/02/12/JVM_HelloWorld/</loc>
     
-    <lastmod>2018-12-31T04:00:08.124Z</lastmod>
+    <lastmod>2018-02-12T09:29:07.107Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/12/20/JUC_CyclicBarrier/</loc>
+    
+    <lastmod>2017-12-20T13:50:49.466Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/11/17/JUC_Semaphore/</loc>
+    
+    <lastmod>2017-11-17T13:33:36.167Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/11/15/ReentrantLock/</loc>
+    
+    <lastmod>2017-11-15T12:30:21.058Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/11/06/JUC_CountDownLatch/</loc>
+    
+    <lastmod>2017-11-12T14:41:13.586Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/10/28/Java_DesignPattern/</loc>
+    
+    <lastmod>2017-10-28T11:10:15.152Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/10/28/Java_ThreadLocal/</loc>
+    
+    <lastmod>2017-10-28T04:08:55.601Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/10/12/Java_Singleton/</loc>
+    
+    <lastmod>2017-10-12T12:22:20.703Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/2017/09/20/Java_proxy/</loc>
+    
+    <lastmod>2017-10-03T06:32:07.513Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://nullhint.org/about/index.html</loc>
+    
+    <lastmod>2017-09-17T16:28:35.289Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://nullhint.org/404.html</loc>
     
-    <lastmod>2018-12-31T04:00:08.123Z</lastmod>
+    <lastmod>2017-09-15T12:09:14.682Z</lastmod>
     
   </url>
   

@@ -7,15 +7,19 @@
   
 
   
-  <title>Archives: 2017/10 | Alan&#39;s Blog</title>
+  <title>Oracle位图索引总结 | Alan&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Alan&#39;s Blog">
-<meta property="og:url" content="http://nullhint.org/archives/2017/10/index.html">
+  <meta name="description" content="概述Oracle有两大类索引，一种是B-Tree索引，一种是Bitmap索引（位图索引）。B-Tree索引的内部使用N叉查找树作为存储结构，存储的是列值，而Bitmap索引存储的是比特位值，所以在某些场景下空间和时间查找效率更高。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle位图索引总结">
+<meta property="og:url" content="http://nullhint.org/2019/04/16/Oracle_BitmapIndex/index.html">
 <meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="概述Oracle有两大类索引，一种是B-Tree索引，一种是Bitmap索引（位图索引）。B-Tree索引的内部使用N叉查找树作为存储结构，存储的是列值，而Bitmap索引存储的是比特位值，所以在某些场景下空间和时间查找效率更高。">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-16T04:36:07.608Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Alan&#39;s Blog">
+<meta name="twitter:title" content="Oracle位图索引总结">
+<meta name="twitter:description" content="概述Oracle有两大类索引，一种是B-Tree索引，一种是Bitmap索引（位图索引）。B-Tree索引的内部使用N叉查找树作为存储结构，存储的是列值，而Bitmap索引存储的是比特位值，所以在某些场景下空间和时间查找效率更高。">
   
     <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
   
@@ -64,135 +68,188 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
+        <section id="main"><article id="post-Oracle_BitmapIndex" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/16/Oracle_BitmapIndex/" class="article-date">
+  <time datetime="2019-04-16T04:35:00.000Z" itemprop="datePublished">2019-04-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Database/">Database</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Oracle位图索引总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
       
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#适用条件"><span class="toc-number">2.</span> <span class="toc-text">适用条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-number">3.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">4.</span> <span class="toc-text">参考链接</span></a></li></ol>
         </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/10/29/Java_BuilderPattern/" class="archive-article-date">
-  <time datetime="2017-10-29T11:35:00.000Z" itemprop="datePublished">Oct 29</time>
-</a>
+        
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Oracle有两大类索引，一种是<code>B-Tree</code>索引，一种是<code>Bitmap</code>索引（位图索引）。<br><code>B-Tree</code>索引的内部使用N叉查找树作为存储结构，存储的是列值，而<code>Bitmap</code>索引存储的是比特位值，所以在某些场景下空间和时间查找效率更高。</p>
+<a id="more"></a>
+<h2 id="适用条件"><a href="#适用条件" class="headerlink" title="适用条件"></a>适用条件</h2><ol>
+<li>位图索引列大量重复。（如性别、婚姻状况等）</li>
+<li>该表极少更新。（如用在数据仓库，做查询使用）</li>
+</ol>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>有如下<code>customers</code>表，数据如下：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>GENDER</th>
+<th>MARITAL_STATUS</th>
+<th>INCOME_LEVEL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>70</td>
+<td>F</td>
+<td></td>
+<td>D: 70,000 - 89,999</td>
+</tr>
+<tr>
+<td>80</td>
+<td>F</td>
+<td>married</td>
+<td>H: 150,000 - 169,999</td>
+</tr>
+<tr>
+<td>90</td>
+<td>M</td>
+<td>single</td>
+<td>H: 150,000 - 169,999</td>
+</tr>
+<tr>
+<td>100</td>
+<td>F</td>
+<td></td>
+<td>I: 170,000 - 189,999</td>
+</tr>
+<tr>
+<td>110</td>
+<td>F</td>
+<td>married</td>
+<td>C: 50,000 - 69,999</td>
+</tr>
+<tr>
+<td>120</td>
+<td>M</td>
+<td>single</td>
+<td>F: 110,000 - 129,999</td>
+</tr>
+<tr>
+<td>130</td>
+<td>M</td>
+<td></td>
+<td>J: 190,000 - 249,999</td>
+</tr>
+<tr>
+<td>140</td>
+<td>M</td>
+<td>married</td>
+<td>G: 130,000 - 149,999</td>
+</tr>
+</tbody>
+</table>
+<p>在<code>GENDER</code>（性别）字段建<strong>位图索引</strong>时，Oracle依照一定次序为每一个<code>GENDER</code>值（F/M）建立一个值列表（目的是可以利用位操作做查询条件过滤），如下所示：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>gender=’M’</th>
+<th>gender=’F’</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cust_id 70</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>cust_id 80</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>cust_id 90</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>cust_id 100</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>cust_id 110</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>cust_id 120</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>cust_id 130</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>cust_id 140</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>在进行一系列位操作后，Oracle依照对应关系获取符合条件的数据。<br>需要注意的是，对于频繁更新的字段，位图索引是不适用的。因为更新会锁定当前值列表（如gender=’M’值列表）和被更新的值列表（如gender=’F’值列表），造成大面积事务阻塞。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://www.cnblogs.com/LBSer/p/3322630.html" target="_blank" rel="external">https://www.cnblogs.com/LBSer/p/3322630.html</a></li>
+<li><a href="https://blog.csdn.net/yidian815/article/details/16891021" target="_blank" rel="external">https://blog.csdn.net/yidian815/article/details/16891021</a></li>
+<li><a href="http://blog.itpub.net/29654823/viewspace-2150299/" target="_blank" rel="external">http://blog.itpub.net/29654823/viewspace-2150299/</a></li>
+<li><a href="https://docs.oracle.com/cd/B19306_01/server.102/b14223/indexes.htm" target="_blank" rel="external">https://docs.oracle.com/cd/B19306_01/server.102/b14223/indexes.htm</a></li>
+</ul>
+
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/10/29/Java_BuilderPattern/">建造者（生成器）模式</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/10/29/Java_TemplateMethodPattern/" class="archive-article-date">
-  <time datetime="2017-10-29T09:10:00.000Z" itemprop="datePublished">Oct 29</time>
-</a>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2019/04/16/Oracle_BitmapIndex/" data-id="cjujaonbc000wgwv7sxp04twc" class="article-share-link">Share</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/10/29/Java_TemplateMethodPattern/">模板方法模式</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/10/28/Java_DesignPattern/" class="archive-article-date">
-  <time datetime="2017-10-28T11:10:00.000Z" itemprop="datePublished">Oct 28</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/10/28/Java_DesignPattern/">设计模式概述</a>
-    </h1>
-  
-
-    </header>
+    </footer>
   </div>
-</article>
   
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/10/28/Java_ThreadLocal/" class="archive-article-date">
-  <time datetime="2017-10-28T04:10:00.000Z" itemprop="datePublished">Oct 28</time>
-</a>
-      
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/10/28/Java_ThreadLocal/">ThreadLocal和InheritableThreadLocal实现原理</a>
-    </h1>
   
+    <a href="/2019/01/10/Windows10Photos/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">解决Windows10自带的“照片”应用闪退的问题</div>
+    </a>
+  
+</nav>
 
-    </header>
-  </div>
+  
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/10/22/Java_FactoryPattern/" class="archive-article-date">
-  <time datetime="2017-10-22T05:15:00.000Z" itemprop="datePublished">Oct 22</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/10/22/Java_FactoryPattern/">Java工厂模式实现方式</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/10/12/Java_Singleton/" class="archive-article-date">
-  <time datetime="2017-10-12T13:00:00.000Z" itemprop="datePublished">Oct 12</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/10/12/Java_Singleton/">Java单例模式实现方式</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
 
 </section>
         
