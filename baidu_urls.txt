@@ -1,1 +1,1 @@
-http://nullhint.org/2019/04/16/Oracle_BitmapIndex/
+http://nullhint.org/2019/04/17/DistributedTransaction/

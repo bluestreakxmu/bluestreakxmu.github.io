@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="YBQkHLzS0a" />
+  <meta name="google-site-verification" content="mSIsFtp_QyQFw0EYJX9ARgbIxRAnbAR-fOaaxhVMiYc" />
+  
+
+  
+  <title>分布式事务实现方案 | Alan&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述对于单体系统，可以通过本地事务来保证ACID，而对于分布式系统（如微服务、异构系统等），要保证各系统间的一致性，就需要分布式事务的介入。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式事务实现方案">
+<meta property="og:url" content="http://nullhint.org/2019/04/17/DistributedTransaction/index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="概述对于单体系统，可以通过本地事务来保证ACID，而对于分布式系统（如微服务、异构系统等），要保证各系统间的一致性，就需要分布式事务的介入。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-17T12:16:57.382Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分布式事务实现方案">
+<meta name="twitter:description" content="概述对于单体系统，可以通过本地事务来保证ACID，而对于分布式系统（如微服务、异构系统等），要保证各系统间的一致性，就需要分布式事务的介入。">
+  
+    <link rel="alternate" href="/atom.xml" title="Alan&#39;s Blog" type="application/atom+xml">
+  
+  <!--
+    <link rel="icon" href="/favicon.png">
+  -->
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Alan&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://nullhint.org"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-DistributedTransaction" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/17/DistributedTransaction/" class="article-date">
+  <time datetime="2019-04-17T12:20:00.000Z" itemprop="datePublished">2019-04-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/分布式/">分布式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      分布式事务实现方案
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- 文章目录 -->
+        
+        <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现方案"><span class="toc-number">2.</span> <span class="toc-text">实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#两阶段提交（2PC-Two-Phase-Commit）"><span class="toc-number">2.1.</span> <span class="toc-text">两阶段提交（2PC,Two-Phase-Commit）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概述-1"><span class="toc-number">2.1.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点"><span class="toc-number">2.1.2.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#补偿事务（TCC-Try-Confirm-Cancel）"><span class="toc-number">2.2.</span> <span class="toc-text">补偿事务（TCC,Try-Confirm-Cancel）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概述-2"><span class="toc-number">2.2.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-1"><span class="toc-number">2.2.2.</span> <span class="toc-text">优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#与2PC的区别"><span class="toc-number">2.2.3.</span> <span class="toc-text">与2PC的区别</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地消息表"><span class="toc-number">2.3.</span> <span class="toc-text">本地消息表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概述-3"><span class="toc-number">2.3.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-2"><span class="toc-number">2.3.2.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事务消息"><span class="toc-number">2.4.</span> <span class="toc-text">事务消息</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概述-4"><span class="toc-number">2.4.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-3"><span class="toc-number">2.4.2.</span> <span class="toc-text">优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#与本地消息表区别"><span class="toc-number">2.4.3.</span> <span class="toc-text">与本地消息表区别</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#尽最大努力通知"><span class="toc-number">2.5.</span> <span class="toc-text">尽最大努力通知</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概述-5"><span class="toc-number">2.5.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-4"><span class="toc-number">2.5.2.</span> <span class="toc-text">优缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">3.</span> <span class="toc-text">参考链接</span></a></li></ol>
+        </div>
+        
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>对于单体系统，可以通过本地事务来保证ACID，而对于分布式系统（如微服务、异构系统等），要保证各系统间的一致性，就需要分布式事务的介入。</p>
+<a id="more"></a>
+<h2 id="实现方案"><a href="#实现方案" class="headerlink" title="实现方案"></a>实现方案</h2><h3 id="两阶段提交（2PC-Two-Phase-Commit）"><a href="#两阶段提交（2PC-Two-Phase-Commit）" class="headerlink" title="两阶段提交（2PC,Two-Phase-Commit）"></a>两阶段提交（2PC,Two-Phase-Commit）</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><p>分布式事务处理会涉及多个数据库的操作，2PC通过事务协调器TM(Transaction Manager)来统一协调各个子事务的提交或回滚，需要参与事务的各个数据库实现XA协议（两阶段提交协议）。<br>2PC将事务的提交拆分为两个阶段：prepare和commit/rollback。在prepare阶段事务协调器需要等待所有子事务的投票，如果所有子事务都投票为可以提交事务，则事务协调器通知提交事务，否则回滚。</p>
+<h4 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h4><ul>
+<li><p><strong>优点：</strong> </p>
+<ol>
+<li>可以保证强一致性。</li>
+<li>业务侵入性小。</li>
+</ol>
+</li>
+<li><p><strong>缺点：</strong></p>
+<ol>
+<li>若某些本地事务执行时间过长，会拉长主事务的时间，不适用于高并发场景。</li>
+<li>需要实现XA协议，使用局限性较大。</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>补充：为了解决两阶段提交的阻塞问题，有一种三阶段提交（3PC）的方案，3PC有超时机制，但是在协调者与子系统间需要多次传递消息，延时很大，故不怎么被采用。</p>
+</blockquote>
+<h3 id="补偿事务（TCC-Try-Confirm-Cancel）"><a href="#补偿事务（TCC-Try-Confirm-Cancel）" class="headerlink" title="补偿事务（TCC,Try-Confirm-Cancel）"></a>补偿事务（TCC,Try-Confirm-Cancel）</h3><h4 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h4><p>TCC事务机制相对于传统的两阶段提交（2PC），其特征在于不依赖资源管理器(RM)对XA协议的支持，而是由业务系统的业务逻辑调度来实现分布式事务。<br>TCC事务把传统事务机制中的业务逻辑拆分为两个步骤：<strong>初步操作（Try）</strong>和<strong>确认操作/取消操作（Confirm/Cancel）</strong>，当进行到第二个步骤时才提交事务，只有两个步骤合在一起才构成一个完整的事务。<br>在传统事务机制中，事务的处理是由事务管理器负责的，而TCC事务机制的事务处理也是由业务逻辑来提供，会增加开发成本和加大代码的嵌入性。</p>
+<h4 id="优缺点-1"><a href="#优缺点-1" class="headerlink" title="优缺点"></a>优缺点</h4><ul>
+<li><strong>优点：</strong> </li>
+</ul>
+<ol>
+<li>有较好的性能。</li>
+</ol>
+<ul>
+<li><strong>缺点：</strong> </li>
+</ul>
+<ol>
+<li>复杂度高。</li>
+<li>业务侵入性大。</li>
+<li>维护成本高。</li>
+</ol>
+<h4 id="与2PC的区别"><a href="#与2PC的区别" class="headerlink" title="与2PC的区别"></a>与2PC的区别</h4><p>TCC与2PC的区别在于，TCC是通过业务逻辑来实现事务管理，而2PC依赖于数据库或中间件厂商实现XA协议来实现事务管理。</p>
+<h3 id="本地消息表"><a href="#本地消息表" class="headerlink" title="本地消息表"></a>本地消息表</h3><h4 id="概述-3"><a href="#概述-3" class="headerlink" title="概述"></a>概述</h4><p>通过本地消息表实现分布式事务是业界使用较多的，这种事务机制将分布式事务分成多个本地事务，这里称之为<strong>主事务</strong>和<strong>从事务</strong>。主事务要先行提交，主事务通过本地事务保证与本地消息表写入的原子性。然后再通过消息通知从事务，从事务从消息中获取信息进行本地提交。这是一种异步事务机制，只能保证最终一致性，但是可用性非常高。</p>
+<h4 id="优缺点-2"><a href="#优缺点-2" class="headerlink" title="优缺点"></a>优缺点</h4><ul>
+<li><strong>优点：</strong> </li>
+</ul>
+<ol>
+<li>高可用。</li>
+<li>业务侵入性小。 </li>
+</ol>
+<ul>
+<li><strong>缺点：</strong> </li>
+</ul>
+<ol>
+<li>只能保证最终一致。</li>
+</ol>
+<h3 id="事务消息"><a href="#事务消息" class="headerlink" title="事务消息"></a>事务消息</h3><h4 id="概述-4"><a href="#概述-4" class="headerlink" title="概述"></a>概述</h4><p>事务消息与本地消息表实现机制类似，只是事务消息依赖于支持“事务消息”的消息队列，把主事务和发送消息绑定在一个事务里，保证原子性。</p>
+<h4 id="优缺点-3"><a href="#优缺点-3" class="headerlink" title="优缺点"></a>优缺点</h4><ul>
+<li><strong>优点：</strong></li>
+</ul>
+<ol>
+<li>高可用。</li>
+</ol>
+<ul>
+<li><strong>缺点：</strong></li>
+</ul>
+<ol>
+<li>需要支持“事务消息”的消息队列，如RocketMQ（ActiveMQ、RabbitMQ并不支持事务消息）。</li>
+<li>只能保证最终一致。</li>
+</ol>
+<h4 id="与本地消息表区别"><a href="#与本地消息表区别" class="headerlink" title="与本地消息表区别"></a>与本地消息表区别</h4><p>两种方案都是基于消息的分布式事务，区别在于：如何保证主事务的提交与消息发送这两个操作的原子性。</p>
+<h3 id="尽最大努力通知"><a href="#尽最大努力通知" class="headerlink" title="尽最大努力通知"></a>尽最大努力通知</h3><h4 id="概述-5"><a href="#概述-5" class="headerlink" title="概述"></a>概述</h4><p>最大努力通知方案也需要借助MQ消息队列来进行事务控制，其实现比较简单，本质上是通过定期校对，实现数据一致性。<br>最大努力通知方案在业务的主动方完成业务处理后，向业务被动方发送消息，允许消息丢失，当消息丢失时，通过一定的通知规则重试N次重发消息。主动方也提供接口用以校对核查。</p>
+<h4 id="优缺点-4"><a href="#优缺点-4" class="headerlink" title="优缺点"></a>优缺点</h4><ul>
+<li><strong>优点：</strong></li>
+</ul>
+<ol>
+<li>实现简单。</li>
+</ol>
+<ul>
+<li><strong>缺点：</strong></li>
+</ul>
+<ol>
+<li>仅适用于对业务最终一致性的时间敏感度低的系统。</li>
+</ol>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="http://www.bytesoft.org/tcc-intro/" target="_blank" rel="external">http://www.bytesoft.org/tcc-intro/</a></li>
+<li><a href="https://www.cnblogs.com/lyhabc/p/4902341.html" target="_blank" rel="external">https://www.cnblogs.com/lyhabc/p/4902341.html</a></li>
+<li><a href="https://juejin.im/post/5baa54e1f265da0ac2566fb2" target="_blank" rel="external">https://juejin.im/post/5baa54e1f265da0ac2566fb2</a></li>
+<li><a href="https://www.cnblogs.com/xybaby/p/7465816.html" target="_blank" rel="external">https://www.cnblogs.com/xybaby/p/7465816.html</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://nullhint.org/2019/04/17/DistributedTransaction/" data-id="cjul6kzgd0002zwv72zbvyojo" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/04/16/Oracle_BitmapIndex/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Oracle位图索引总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ehcache/">Ehcache</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JDK源码/">JDK源码</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Windows10/">Windows10</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式/">分布式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/博客搭建/">博客搭建</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/17/DistributedTransaction/">分布式事务实现方案</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/Oracle_BitmapIndex/">Oracle位图索引总结</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/10/Windows10Photos/">解决Windows10自带的“照片”应用闪退的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/13/EhcacheDemo/">Spring+Ehcache实现对象缓存以及页面整体和局部缓存</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/17/JVM_GarbageCollectors/">HotSpot虚拟机垃圾收集器</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+    
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2019 Xibo Li&nbsp;&nbsp; | &nbsp;&nbsp;
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>&nbsp; | &nbsp;&nbsp;
+            Hosted by <a href="https://coding.net/pages" style="font-weight: bold">CODING Pages</a>
+        </div>
+    </div>
+    <span style="display: none">
+  本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span
+                id="busuanzi_value_page_pv"></span> 次
+    </span>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="https://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	<script src="/js/gotop.js"></script>
+	<!--
+	<script src="/js/gotop.js"></script>
+	-->
+
+</div>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

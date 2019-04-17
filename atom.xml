@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://nullhint.org/"/>
-  <updated>2019-04-16T04:36:07.608Z</updated>
+  <updated>2019-04-17T12:16:57.382Z</updated>
   <id>http://nullhint.org/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>分布式事务实现方案</title>
+    <link href="http://nullhint.org/2019/04/17/DistributedTransaction/"/>
+    <id>http://nullhint.org/2019/04/17/DistributedTransaction/</id>
+    <published>2019-04-17T12:20:00.000Z</published>
+    <updated>2019-04-17T12:16:57.382Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>对于单体系统，可以通过本地事务来保证ACID，而对于分布式系统（如微服务、异构系统等），要保证各系统间的一致性，就需要分布式事务的介入。</p><a id="more"></a><h2 id="实现方案"><a href="#实现方案" class="headerlink" title="实现方案"></a>实现方案</h2><h3 id="两阶段提交（2PC-Two-Phase-Commit）"><a href="#两阶段提交（2PC-Two-Phase-Commit）" class="headerlink" title="两阶段提交（2PC,Two-Phase-Commit）"></a>两阶段提交（2PC,Two-Phase-Commit）</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><p>分布式事务处理会涉及多个数据库的操作，2PC通过事务协调器TM(Transaction Manager)来统一协调各个子事务的提交或回滚，需要参与事务的各个数据库实现XA协议（两阶段提交协议）。<br>2PC将事务的提交拆分为两个阶段：prepare和commit/rollback。在prepare阶段事务协调器需要等待所有子事务的投票，如果所有子事务都投票为可以提交事务，则事务协调器通知提交事务，否则回滚。</p><h4 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h4><ul><li><p><strong>优点：</strong> </p><ol><li>可以保证强一致性。</li><li>业务侵入性小。</li></ol></li><li><p><strong>缺点：</strong></p><ol><li>若某些本地事务执行时间过长，会拉长主事务的时间，不适用于高并发场景。</li><li>需要实现XA协议，使用局限性较大。</li></ol></li></ul><blockquote><p>补充：为了解决两阶段提交的阻塞问题，有一种三阶段提交（3PC）的方案，3PC有超时机制，但是在协调者与子系统间需要多次传递消息，延时很大，故不怎么被采用。</p></blockquote><h3 id="补偿事务（TCC-Try-Confirm-Cancel）"><a href="#补偿事务（TCC-Try-Confirm-Cancel）" class="headerlink" title="补偿事务（TCC,Try-Confirm-Cancel）"></a>补偿事务（TCC,Try-Confirm-Cancel）</h3><h4 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h4><p>TCC事务机制相对于传统的两阶段提交（2PC），其特征在于不依赖资源管理器(RM)对XA协议的支持，而是由业务系统的业务逻辑调度来实现分布式事务。<br>TCC事务把传统事务机制中的业务逻辑拆分为两个步骤：<strong>初步操作（Try）</strong>和<strong>确认操作/取消操作（Confirm/Cancel）</strong>，当进行到第二个步骤时才提交事务，只有两个步骤合在一起才构成一个完整的事务。<br>在传统事务机制中，事务的处理是由事务管理器负责的，而TCC事务机制的事务处理也是由业务逻辑来提供，会增加开发成本和加大代码的嵌入性。</p><h4 id="优缺点-1"><a href="#优缺点-1" class="headerlink" title="优缺点"></a>优缺点</h4><ul><li><strong>优点：</strong> </li></ul><ol><li>有较好的性能。</li></ol><ul><li><strong>缺点：</strong> </li></ul><ol><li>复杂度高。</li><li>业务侵入性大。</li><li>维护成本高。</li></ol><h4 id="与2PC的区别"><a href="#与2PC的区别" class="headerlink" title="与2PC的区别"></a>与2PC的区别</h4><p>TCC与2PC的区别在于，TCC是通过业务逻辑来实现事务管理，而2PC依赖于数据库或中间件厂商实现XA协议来实现事务管理。</p><h3 id="本地消息表"><a href="#本地消息表" class="headerlink" title="本地消息表"></a>本地消息表</h3><h4 id="概述-3"><a href="#概述-3" class="headerlink" title="概述"></a>概述</h4><p>通过本地消息表实现分布式事务是业界使用较多的，这种事务机制将分布式事务分成多个本地事务，这里称之为<strong>主事务</strong>和<strong>从事务</strong>。主事务要先行提交，主事务通过本地事务保证与本地消息表写入的原子性。然后再通过消息通知从事务，从事务从消息中获取信息进行本地提交。这是一种异步事务机制，只能保证最终一致性，但是可用性非常高。</p><h4 id="优缺点-2"><a href="#优缺点-2" class="headerlink" title="优缺点"></a>优缺点</h4><ul><li><strong>优点：</strong> </li></ul><ol><li>高可用。</li><li>业务侵入性小。 </li></ol><ul><li><strong>缺点：</strong> </li></ul><ol><li>只能保证最终一致。</li></ol><h3 id="事务消息"><a href="#事务消息" class="headerlink" title="事务消息"></a>事务消息</h3><h4 id="概述-4"><a href="#概述-4" class="headerlink" title="概述"></a>概述</h4><p>事务消息与本地消息表实现机制类似，只是事务消息依赖于支持“事务消息”的消息队列，把主事务和发送消息绑定在一个事务里，保证原子性。</p><h4 id="优缺点-3"><a href="#优缺点-3" class="headerlink" title="优缺点"></a>优缺点</h4><ul><li><strong>优点：</strong></li></ul><ol><li>高可用。</li></ol><ul><li><strong>缺点：</strong></li></ul><ol><li>需要支持“事务消息”的消息队列，如RocketMQ（ActiveMQ、RabbitMQ并不支持事务消息）。</li><li>只能保证最终一致。</li></ol><h4 id="与本地消息表区别"><a href="#与本地消息表区别" class="headerlink" title="与本地消息表区别"></a>与本地消息表区别</h4><p>两种方案都是基于消息的分布式事务，区别在于：如何保证主事务的提交与消息发送这两个操作的原子性。</p><h3 id="尽最大努力通知"><a href="#尽最大努力通知" class="headerlink" title="尽最大努力通知"></a>尽最大努力通知</h3><h4 id="概述-5"><a href="#概述-5" class="headerlink" title="概述"></a>概述</h4><p>最大努力通知方案也需要借助MQ消息队列来进行事务控制，其实现比较简单，本质上是通过定期校对，实现数据一致性。<br>最大努力通知方案在业务的主动方完成业务处理后，向业务被动方发送消息，允许消息丢失，当消息丢失时，通过一定的通知规则重试N次重发消息。主动方也提供接口用以校对核查。</p><h4 id="优缺点-4"><a href="#优缺点-4" class="headerlink" title="优缺点"></a>优缺点</h4><ul><li><strong>优点：</strong></li></ul><ol><li>实现简单。</li></ol><ul><li><strong>缺点：</strong></li></ul><ol><li>仅适用于对业务最终一致性的时间敏感度低的系统。</li></ol><h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul><li><a href="http://www.bytesoft.org/tcc-intro/" target="_blank" rel="external">http://www.bytesoft.org/tcc-intro/</a></li><li><a href="https://www.cnblogs.com/lyhabc/p/4902341.html" target="_blank" rel="external">https://www.cnblogs.com/lyhabc/p/4902341.html</a></li><li><a href="https://juejin.im/post/5baa54e1f265da0ac2566fb2" target="_blank" rel="external">https://juejin.im/post/5baa54e1f265da0ac2566fb2</a></li><li><a href="https://www.cnblogs.com/xybaby/p/7465816.html" target="_blank" rel="external">https://www.cnblogs.com/xybaby/p/7465816.html</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;p&gt;对于单体系统，可以通过本地事务来保证ACID，而对于分布式系统（如微服务、异构系统等），要保证各系统间的一致性，就需要分布式事务的介入。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="分布式" scheme="http://nullhint.org/categories/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Oracle位图索引总结</title>
@@ -453,37 +473,6 @@
     
       &lt;h2 id=&quot;定义&quot;&gt;&lt;a href=&quot;#定义&quot; class=&quot;headerlink&quot; title=&quot;定义&quot;&gt;&lt;/a&gt;定义&lt;/h2&gt;&lt;p&gt;模板方法模式在一个方法中定义一个算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某些步骤。&lt;br&gt;Define the skeleton of an algorithm in an operation,deferring some steps to subclasses.Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm’s structure.&lt;/p&gt;
 &lt;h2 id=&quot;通用类图&quot;&gt;&lt;a href=&quot;#通用类图&quot; class=&quot;headerlink&quot; title=&quot;通用类图&quot;&gt;&lt;/a&gt;通用类图&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2018/11/03/5bdd867ded711.jpg&quot; alt=&quot;模板方法模式通用类图&quot;&gt;&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="设计模式" scheme="http://nullhint.org/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>设计模式概述</title>
-    <link href="http://nullhint.org/2017/10/28/Java_DesignPattern/"/>
-    <id>http://nullhint.org/2017/10/28/Java_DesignPattern/</id>
-    <published>2017-10-28T11:10:00.000Z</published>
-    <updated>2017-10-28T11:10:15.152Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>设计模式(Design Pattern)是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结，使用设计模式是为了可重用代码、让代码更容易被他人理解并且保证代码可靠性。</p><h2 id="设计模式三大分类"><a href="#设计模式三大分类" class="headerlink" title="设计模式三大分类"></a>设计模式三大分类</h2><ul><li><p>设计模式按<strong>用途</strong>划分，可以分为以下三大类型：</p><ul><li><strong>创建型（Creational）</strong>：描述如何创建对象。</li><li><strong>结构型（Structural）</strong>：描述如何实现类或对象的组合。</li><li><strong>行为型（Behavioral）</strong>：描述类或对象怎样交互以及怎样分配职责。</li></ul></li><li><p>此外，根据某个模式主要用于处理类之间的关系还是对象之间的关系，还可以分为：<strong>类模式</strong>和<strong>对象模式</strong>。<br>我们经常把两种分类结合使用，比如单例模式是对象创建类型模式，模板方法模式是类行为模式。</p></li></ul><a id="more"></a><ul><li>23中经典设计模式分类如下：</li></ul><table><thead><tr><th style="text-align:center"><em>分类</em></th><th style="text-align:left">创建型</th><th style="text-align:left">结构型</th><th style="text-align:left">行为型</th></tr></thead><tbody><tr><td style="text-align:center"><strong>类</strong></td><td style="text-align:left">Factory Method（工厂方法）</td><td style="text-align:left">Adapter_Class（适配器类）</td><td style="text-align:left">Interpreter（解释器）<br> Template Method（模板方法）</td></tr><tr><td style="text-align:center"><strong>对象</strong></td><td style="text-align:left">Abstract Factory（抽象工厂）  <br> Builder（生成器）  <br> Prototype（原型）  <br> Singleton（单例）</td><td style="text-align:left">Adapter_Object（适配器对象） <br> Bridge（桥接） <br> Composite（组合） <br> Decorator（装饰） <br> Facade（外观） <br> Flyweight（享元） <br> Proxy（代理）</td><td style="text-align:left">Chain of Responsibility（职责链） <br> Command（命令） <br> Iterator（迭代器） <br> Mediator（中介者） <br> Memento（备忘录） <br> Observer（观察者） <br> State（状态） <br> Strategy（策略） <br> Visitor（访问者模式）</td></tr></tbody></table><!--more--><h2 id="设计模式六大原则"><a href="#设计模式六大原则" class="headerlink" title="设计模式六大原则"></a>设计模式六大原则</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul><li><p>设计模式六大原则分别为：</p><ul><li><strong>单一职责原则（S）</strong>：Single Responsibility Principle，SRP。</li><li><strong>里氏替换原则（L）</strong>：Liskov Substitution Principle，LSP。</li><li><strong>依赖倒置原则（D）</strong>：Dependence Inversion Principle，DIP。</li><li><strong>接口隔离原则（I）</strong>：Interface Segregation Principle。</li><li><strong>迪米特法则（L）</strong>：Law of Demeter，LoD，也称为最少知识原则（Least Knowledge Principle, LKP）。</li><li><strong>开闭原则（O）</strong>：Open Closed Principle。</li></ul></li><li><p>六个设计原则关系<br>6个设计原则首字母联合起来就是<strong>SOLID</strong>（稳定的），其代表的含义也就是把这6个原则结合使用的好处：建立稳定灵活、健壮的设计，而<strong>开闭原则</strong>又是重中之重，是最基础的原则，是其他五大原则的精神领袖。</p></li></ul><h3 id="单一职责原则"><a href="#单一职责原则" class="headerlink" title="单一职责原则"></a>单一职责原则</h3><h4 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h4><p>应该有且仅有一个原因引起类的变更（There  should never be more than one reason for a class to change ）。</p><h4 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h4><ol><li>类的复杂性降低。</li><li>可读性提高。</li><li>可维护性提高。</li><li>变更引起的风险降低。</li></ol><h4 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h4><p>职责的划分。</p><h4 id="适用范围"><a href="#适用范围" class="headerlink" title="适用范围"></a>适用范围</h4><p>类、接口和方法（一个方法尽可能做一件事）。</p><h4 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h4><p>接口一定要做到单一职责，类的设计尽量做到只有一个原因引起变化。</p><h3 id="里氏替换原则"><a href="#里氏替换原则" class="headerlink" title="里氏替换原则"></a>里氏替换原则</h3><h4 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h4><ul><li><p>第一种定义（最正宗）：</p><blockquote><p>If for each object o1 of type S there is an object o2 of type T such that for all programs P defined in terms of T, the behavior of P is unchanged when o1 is substituted for o2 then S is a subtype of T.（如果对每一个类型为S的对象o1，都有类型为T的对象o2，使得以T定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变化，那么类型S是类型T的子类型。）</p></blockquote></li><li><p>第二种定义（最清晰明确）：</p><blockquote><p>Function that use pointers or references to base classes must be able to use objects of derived classes without knowing it.（所有引用基类的地方必须能透明地使用其子类的对象。）</p></blockquote></li><li><p>该原则包含了以下4层含义：</p><blockquote><ol><li>子类必须完全实现父类的方法。</li><li>子类可以有自己的个性。</li><li>覆盖或实现父类的方法时输入参数可以被放大。</li><li>覆写或实现父类的方法时输出结果可以被缩小。</li></ol></blockquote></li></ul><h4 id="最佳实践-1"><a href="#最佳实践-1" class="headerlink" title="最佳实践"></a>最佳实践</h4><p>在项目中，采用里氏替换原则时，尽量避免子类的“个性”。</p><h3 id="依赖倒置原则"><a href="#依赖倒置原则" class="headerlink" title="依赖倒置原则"></a>依赖倒置原则</h3><h4 id="定义-3"><a href="#定义-3" class="headerlink" title="定义"></a>定义</h4><ul><li>High level modules should not depend upon low level modules. Both should depend upon abstraction. Abstraction should not depend upon details. Details should depend upon abstractions.</li><li>更精简的定义：面向接口编程。</li></ul><h4 id="在Java语言中的表现"><a href="#在Java语言中的表现" class="headerlink" title="在Java语言中的表现"></a>在Java语言中的表现</h4><ol><li>模块间的依赖通过抽象发生，实现类之间不发生直接的依赖关系，其依赖关系式通过接口或抽象类产生的。</li><li>接口或抽象类不依赖于实现类。</li><li>实现类依赖接口或抽象类。</li></ol><h4 id="最佳实践-2"><a href="#最佳实践-2" class="headerlink" title="最佳实践"></a>最佳实践</h4><ol><li>每个类都有接口或抽象类，或者抽象类和接口两者都具备。</li><li>变量的表面类型尽量是接口或者是抽象类。</li><li>任何类都不应该从具体类派生。</li><li>尽量不要覆写基类的方法。</li><li>结合里氏替换原则适用。</li></ol><blockquote><p><strong>何为“倒置”</strong>：<br>依赖正置就是类间的依赖是实实在在地实现类间的依赖，也就是面向实现编程。我要使用笔记本，就直接依赖笔记本。而编写程序需要的是对现实世界的事物进行抽象，抽象的结果就是有了抽象类和接口，然后我们根据系统设计的需要产生了抽象间的依赖，代替了人们传统思维的事物间的依赖。</p></blockquote><h3 id="接口隔离原则"><a href="#接口隔离原则" class="headerlink" title="接口隔离原则"></a>接口隔离原则</h3><h4 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h4><ul><li><p>一种定义</p><blockquote><p>Clients should not be forced to depend upon interfaces that they don’t use.（客户端不应该依赖它不需要的接口） </p></blockquote></li><li><p>另一种定义</p><blockquote><p>The dependency of one class to another one should depend on the smallest possible interface.（类间的依赖关系应该建立在最小的接口上）</p></blockquote></li></ul><h4 id="与单一职责原则区别"><a href="#与单一职责原则区别" class="headerlink" title="与单一职责原则区别"></a>与单一职责原则区别</h4><p>接口隔离原则与单一职责原则的审视角度是不相同的，单一职责要求的是类和接口职责单一，注重的是职责，这是业务逻辑上的划分，而接口隔离原则要求接口的方法尽量少。</p><h4 id="最佳实践-3"><a href="#最佳实践-3" class="headerlink" title="最佳实践"></a>最佳实践</h4><p>一个接口只服务于一个子模块或业务逻辑。</p><h3 id="迪米特法则"><a href="#迪米特法则" class="headerlink" title="迪米特法则"></a>迪米特法则</h3><h4 id="定义-5"><a href="#定义-5" class="headerlink" title="定义"></a>定义</h4><p>一个对象应该对其他对象有最少的了解。</p><blockquote><p>包含了四层含义：</p><ol><li>只和朋友交流。</li><li>朋友间也是有距离的。</li><li>是自己的就是自己的。</li><li>谨慎使用Serializable。</li></ol></blockquote><h4 id="最佳实践-4"><a href="#最佳实践-4" class="headerlink" title="最佳实践"></a>最佳实践</h4><p>迪米特法则的核心观念就是类间解耦，弱耦合，只有弱耦合了以后，类的复用率才可以提高。</p><h3 id="开闭原则"><a href="#开闭原则" class="headerlink" title="开闭原则"></a>开闭原则</h3><h4 id="定义-6"><a href="#定义-6" class="headerlink" title="定义"></a>定义</h4><p>Software entities like classes, modules and functions should be open for extension but closed for modifications.（一个软件实体如类、模块和函数应该对扩展开放，对修改关闭）</p><h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p>《设计模式之禅》</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;定义&quot;&gt;&lt;a href=&quot;#定义&quot; class=&quot;headerlink&quot; title=&quot;定义&quot;&gt;&lt;/a&gt;定义&lt;/h2&gt;&lt;p&gt;设计模式(Design Pattern)是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结，使用设计模式是为了可重用代码、让代码更容易被他人理解并且保证代码可靠性。&lt;/p&gt;
-&lt;h2 id=&quot;设计模式三大分类&quot;&gt;&lt;a href=&quot;#设计模式三大分类&quot; class=&quot;headerlink&quot; title=&quot;设计模式三大分类&quot;&gt;&lt;/a&gt;设计模式三大分类&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;设计模式按&lt;strong&gt;用途&lt;/strong&gt;划分，可以分为以下三大类型：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;创建型（Creational）&lt;/strong&gt;：描述如何创建对象。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;结构型（Structural）&lt;/strong&gt;：描述如何实现类或对象的组合。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;行为型（Behavioral）&lt;/strong&gt;：描述类或对象怎样交互以及怎样分配职责。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;此外，根据某个模式主要用于处理类之间的关系还是对象之间的关系，还可以分为：&lt;strong&gt;类模式&lt;/strong&gt;和&lt;strong&gt;对象模式&lt;/strong&gt;。&lt;br&gt;我们经常把两种分类结合使用，比如单例模式是对象创建类型模式，模板方法模式是类行为模式。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
     
     </summary>
     

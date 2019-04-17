@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://nullhint.org/2019/04/17/DistributedTransaction/</loc>
+    
+    <lastmod>2019-04-17T12:16:57.382Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://nullhint.org/2019/04/16/Oracle_BitmapIndex/</loc>
     
     <lastmod>2019-04-16T04:36:07.608Z</lastmod>

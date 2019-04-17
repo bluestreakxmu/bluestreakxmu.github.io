@@ -4,6 +4,24 @@
 
     
   <url>
+    <loc>http://nullhint.org/2019/04/17/DistributedTransaction/</loc>
+    <lastmod>2019-04-17T12:16:57.382Z</lastmod>
+    <data>
+        <display>
+        <title>分布式事务实现方案</title>
+        <pubTime>2019-04-17T12:20:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="分布式" url="http://nullhint.org/categories/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://nullhint.org/2019/04/16/Oracle_BitmapIndex/</loc>
     <lastmod>2019-04-16T04:36:07.608Z</lastmod>
     <data>
